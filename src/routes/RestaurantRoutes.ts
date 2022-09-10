@@ -1,13 +1,17 @@
 import { Router } from "express";
-import RestaurantController from "../controllers/RestaurantController";
-import validators from "../middleware/RestaurantValidator";
+import { RestaurantController } from "../controllers";
+import { RestaurantValidator } from "../middleware";
 
 const router = Router();
 const controller = new RestaurantController();
 
 router.get("/", controller.getAllRestaurants);
 router.get("/:id", controller.getRestaurantById);
-router.post("/", validators, controller.createRestaurant);
+router.post(
+  "/",
+  RestaurantValidator.getValidators(),
+  controller.createRestaurant
+);
 router.put("/:id", controller.updateRestaurant);
 router.delete("/:id", controller.deleteRestaurant);
 

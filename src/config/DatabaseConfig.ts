@@ -1,12 +1,11 @@
 import { DataSource } from "typeorm";
-import models from "../models";
 import config from "./EnvConfig";
 
-const source = new DataSource({
+const database = new DataSource({
   ...config.database,
   type: "mysql",
   synchronize: true,
-  entities: models,
+  entities: ["dist/models/*.js"],
 });
 
-export default source;
+export default database;

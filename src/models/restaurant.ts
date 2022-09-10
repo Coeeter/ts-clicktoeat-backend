@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
 import Branch from "./Branch";
 
-
 @Entity()
 class Restaurant {
   @PrimaryColumn()
