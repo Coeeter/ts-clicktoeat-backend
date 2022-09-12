@@ -1,18 +1,17 @@
 import { Router } from "express";
-import { RestaurantController } from "../controllers";
-import { RestaurantValidator } from "../middleware";
+import { restaurantController } from "../controllers";
+import { restaurantValidator } from "../middleware";
 
 const router = Router();
-const controller = new RestaurantController();
 
-router.get("/", controller.getAllRestaurants);
-router.get("/:id", controller.getRestaurantById);
+router.get("/", restaurantController.getAllRestaurants);
+router.get("/:id", restaurantController.getRestaurantById);
 router.post(
   "/",
-  RestaurantValidator.getValidators(),
-  controller.createRestaurant
+  restaurantValidator.getValidators(),
+  restaurantController.createRestaurant
 );
-router.put("/:id", controller.updateRestaurant);
-router.delete("/:id", controller.deleteRestaurant);
+router.put("/:id", restaurantController.updateRestaurant);
+router.delete("/:id", restaurantController.deleteRestaurant);
 
 export default router;

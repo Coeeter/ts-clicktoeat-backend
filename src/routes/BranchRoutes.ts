@@ -1,16 +1,15 @@
 import { Router } from "express";
-import { BranchController } from "../controllers";
-import { BranchValidator } from "../middleware";
+import { branchController } from "../controllers";
+import { branchValidator } from "../middleware";
 
 const router = Router();
-const controller = new BranchController();
 
-router.post("/", BranchValidator.getValidators("save"), controller.saveBranch);
+router.post("/", branchValidator.getValidators("save"), branchController.saveBranch);
 
 router.delete(
   "/:id",
-  BranchValidator.getValidators("delete"),
-  controller.deleteBranch
+  branchValidator.getValidators("delete"),
+  branchController.deleteBranch
 );
 
 export default router;

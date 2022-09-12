@@ -1,39 +1,44 @@
 import { Request, Response, NextFunction } from "express";
-import { body, param, query, validationResult } from "express-validator";
+import { body, query, validationResult } from "express-validator";
 import { StatusCodes } from "http-status-codes";
 
 class BranchValidator {
-  private static checkQueryForR = query("r")
+  private _checkQueryForR = query("r")
     .exists()
     .withMessage("Query r is missing");
 
-  private static checkAddress = body("address")
+  private _checkAddress = body("address")
     .exists()
     .withMessage("Field address is missing");
 
-  private static checkLatitude = body("latitude")
+  private _checkLatitude = body("latitude")
     .exists()
     .withMessage("Field latitude is missing")
     .isNumeric()
     .withMessage("Field latitude should be a number");
 
-  private static checkLongitude = body("longitude")
+  private _checkLongitude = body("longitude")
     .exists()
     .withMessage("Field longitude is missing")
     .isNumeric()
     .withMessage("Field longitude should be a number");
 
-  private static handleErrors = (
+  private _handleErrors = (
     req: Request,
     res: Response,
     next: NextFunction
   ) => {
-    const errors = validationResult(req)
+    const errors: { error: string; field: string }[] = [];
+    validationResult(req)
       .array()
-      .map(item => ({
-        error: item.msg,
-        field: item.param,
-      }));
+      .forEach(item => {
+        const error = {
+          error: item.msg,
+          field: item.param,
+        };
+        if (errors.map(item => item.field).includes(error.field)) return;
+        errors.push(error);
+      });
     if (errors.length) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         message: "Errors in fields provided",
@@ -43,21 +48,21 @@ class BranchValidator {
     next();
   };
 
-  public static getValidators(route: "save" | "delete") {
+  public getValidators(route: "save" | "delete") {
     if (route == "save") {
       return [
-        this.checkQueryForR,
-        this.checkAddress,
-        this.checkLatitude,
-        this.checkLongitude,
-        this.handleErrors,
+        this._checkQueryForR,
+        this._checkAddress,
+        this._checkLatitude,
+        this._checkLongitude,
+        this._handleErrors,
       ];
     }
     if (route == "delete") {
-      return [this.checkQueryForR, this.handleErrors];
+      return [this._checkQueryForR, this._handleErrors];
     }
     throw new Error("Invalid route passed");
   }
 }
 
-export default BranchValidator;
+export default new BranchValidator();

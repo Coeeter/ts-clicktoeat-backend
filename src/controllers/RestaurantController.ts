@@ -58,7 +58,7 @@ class RestaurantController {
         id,
         name,
         description,
-        imageUrl: `files/${imageUrl}.jpg`,
+        imageUrl: `/files/${imageUrl}.jpg`,
       });
       await image.mv(`uploads/${imageUrl}.jpg`);
     } catch (e) {
@@ -89,7 +89,7 @@ class RestaurantController {
       const imageUrl = v4();
       await unlink(`uploads/${restaurant.imageUrl.split("/")[1]}`);
       await brandImage?.mv(`uploads/${imageUrl}.jpg`);
-      restaurant.imageUrl = `files/${imageUrl}.jpg`;
+      restaurant.imageUrl = `/files/${imageUrl}.jpg`;
     }
     try {
       await this.repository.save(restaurant);
@@ -125,4 +125,4 @@ class RestaurantController {
   };
 }
 
-export default RestaurantController;
+export default new RestaurantController();

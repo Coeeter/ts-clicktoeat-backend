@@ -16,7 +16,7 @@ class Restaurant {
   description!: string;
 
   @OneToMany(() => Branch, branch => branch.restaurant)
-  branches!: Branch[]
+  branches!: Branch[];
 }
 
 export default Restaurant;

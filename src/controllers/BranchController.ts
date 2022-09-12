@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Repository } from "typeorm";
 import { v4 } from "uuid";
-import database from "../config/DatabaseConfig";
 import { Branch, Restaurant } from "../models";
+import database from "../config/DatabaseConfig";
 
 class BranchController {
   private branchRepository: Repository<Branch>;
@@ -83,4 +83,4 @@ class BranchController {
   };
 }
 
-export default BranchController;
+export default new BranchController();

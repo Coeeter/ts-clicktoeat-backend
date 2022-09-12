@@ -1,2 +1,2 @@
-export { default as RestaurantController } from './RestaurantController'
-export { default as BranchController } from './BranchController'
+export { default as restaurantController } from "./RestaurantController";
+export { default as branchController } from "./BranchController";

@@ -1,11 +1,11 @@
+import { NextFunction, Request, Response } from "express";
 import { body, validationResult } from "express-validator";
+import { StatusCodes } from "http-status-codes";
 import { Restaurant } from "../models";
 import database from "../config/DatabaseConfig";
-import { NextFunction, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
 
 class RestaurantValidator {
-  private static checkName = body("name").custom(async name => {
+  private _checkName = body("name").custom(async name => {
     if (!name) throw new Error("Field name is missing");
     const repository = database.getRepository(Restaurant);
     try {
@@ -16,15 +16,11 @@ class RestaurantValidator {
     return Promise.reject("Restaurant name already taken");
   });
 
-  private static checkDescription = body("description")
+  private _checkDescription = body("description")
     .exists()
     .withMessage("Field description is missing");
 
-  private static handleErrors = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  private _handleErrors = (req: Request, res: Response, next: NextFunction) => {
     const validationErrors = validationResult(req)
       .array()
       .map(item => ({
@@ -47,9 +43,9 @@ class RestaurantValidator {
     next();
   };
 
-  public static getValidators() {
-    return [this.checkName, this.checkDescription, this.handleErrors];
+  public getValidators() {
+    return [this._checkName, this._checkDescription, this._handleErrors];
   }
 }
 
-export default RestaurantValidator;
+export default new RestaurantValidator();

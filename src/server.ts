@@ -1,19 +1,25 @@
 import express, { Express } from "express";
 import config from "./config/EnvConfig";
-import expressFileUpload from "express-fileupload";
+import fileUpload from "express-fileupload";
 import database from "./config/DatabaseConfig";
 import routes from "./routes";
 
-database.initialize().then(() => {
+(async () => {
+  try {
+    await database.initialize();
+  } catch (e) {
+    return console.log(e);
+  }
+
   const app: Express = express();
 
   app.use(express.json());
-  app.use(expressFileUpload());
-  app.use("/files", express.static("uploads"));
+  app.use(express.urlencoded({ extended: false }));
+  app.use(fileUpload());
 
   app.use("/", routes);
 
   app.listen(config.server.port, () => {
     console.log(`Server is running on port ${config.server.port}`);
   });
-});
+})();
