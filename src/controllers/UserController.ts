@@ -81,14 +81,7 @@ class UserController {
         message: "Need at least one field to update!",
       });
     }
-    let user;
-    try {
-      user = await this.repository.findOneByOrFail({ email: req.email });
-    } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid token provided",
-      });
-    }
+    const user = req.user!
     if (username) user.username = username;
     if (email) user.email = username;
     if (password) user.setPassword(password);
@@ -135,14 +128,7 @@ class UserController {
 
   public deleteUser = async (req: Request, res: Response) => {
     const { password } = req.body;
-    let user;
-    try {
-      user = await this.repository.findOneByOrFail({ email: req.email });
-    } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid token provided",
-      });
-    }
+    let user = req.user!
     const isCorrectPassword = await user.comparePasswords(password);
     if (!isCorrectPassword) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -163,6 +149,20 @@ class UserController {
     res.status(StatusCodes.OK).json({
       message: `Successfully deleted user with email ${user.email}`,
     });
+  };
+
+  public validateIfUserIsStillLoggedIn = async (
+    req: Request,
+    res: Response
+  ) => {
+    try {
+      res.redirect(`/api/users/${req.user!.id}`);
+    } catch (e) {
+      console.log(e);
+      res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Invalid token provided",
+      });
+    }
   };
 }
 

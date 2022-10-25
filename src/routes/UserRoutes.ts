@@ -11,6 +11,12 @@ router.get("/", userController.getAllUsers);
 
 router.get("/:id", userController.getUserById);
 
+router.get(
+  "/validate-token",
+  authValidator.checkIfTokenExistsAndIsValid,
+  userController.validateIfUserIsStillLoggedIn
+);
+
 router.post(
   "/login",
   userValidator.getValidators("login"),

@@ -33,6 +33,7 @@ class User {
   public generateToken = () => {
     return sign(
       {
+        id: this.id,
         username: this.username,
         email: this.email,
       },
