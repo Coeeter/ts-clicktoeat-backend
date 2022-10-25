@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Repository } from "typeorm";
 import { v4 } from "uuid";
@@ -17,7 +17,7 @@ class UserController {
     try {
       const users = await this.repository
         .createQueryBuilder("user")
-        .select(["user.id", "user.username", "user.email"])
+        .select(["user.id", "user.username", "user.email", "user.image"])
         .getMany();
       res.status(StatusCodes.OK).json(users);
     } catch (e) {
@@ -27,14 +27,19 @@ class UserController {
     }
   };
 
-  public getUserById = async (req: Request, res: Response) => {
+  public getUserById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const id = req.params.id;
     try {
       const user = await this.repository
         .createQueryBuilder("user")
-        .select(["user.id", "user.username", "user.email"])
+        .select(["user.id", "user.username", "user.email", "user.image"])
         .where("user.id = :id", { id })
         .getOne();
+      if (!user) return next();
       res.status(StatusCodes.OK).json(user);
     } catch (e) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
