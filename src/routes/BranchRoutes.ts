@@ -1,13 +1,24 @@
 import { Router } from "express";
-import { branchController } from "../controllers";
-import { branchValidator } from "../middleware";
+import { BranchController } from "../controllers";
+import { AuthValidator, BranchValidator } from "../middleware";
 
 const router = Router();
+const branchController = new BranchController();
+const branchValidator = new BranchValidator();
+const authValidator = new AuthValidator();
 
-router.post("/", branchValidator.getValidators("save"), branchController.saveBranch);
+router.get("/", branchController.getAllBranches);
+
+router.post(
+  "/",
+  authValidator.checkIfTokenExistsAndIsValid,
+  branchValidator.getValidators("save"),
+  branchController.saveBranch
+);
 
 router.delete(
   "/:id",
+  authValidator.checkIfTokenExistsAndIsValid,
   branchValidator.getValidators("delete"),
   branchController.deleteBranch
 );

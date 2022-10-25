@@ -48,4 +48,4 @@ class RestaurantValidator {
   }
 }
 
-export default new RestaurantValidator();
+export default RestaurantValidator;

@@ -23,11 +23,7 @@ class BranchValidator {
     .isNumeric()
     .withMessage("Field longitude should be a number");
 
-  private _handleErrors = (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  private _handleErrors = (req: Request, res: Response, next: NextFunction) => {
     const errors: { error: string; field: string }[] = [];
     validationResult(req)
       .array()
@@ -65,4 +61,4 @@ class BranchValidator {
   }
 }
 
-export default new BranchValidator();
+export default BranchValidator;

@@ -17,6 +17,17 @@ class BranchController {
     this.restaurantRepository = restaurantRepository;
   }
 
+  public getAllBranches = async (req: Request, res: Response) => {
+    try {
+      const result = await this.branchRepository.find();
+      res.status(StatusCodes.OK).json(result);
+    } catch (e) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: e,
+      });
+    }
+  };
+
   public saveBranch = async (req: Request, res: Response) => {
     const restaurantId = req.query.r!.toString();
     let restaurant: Restaurant;
@@ -83,4 +94,4 @@ class BranchController {
   };
 }
 
-export default new BranchController();
+export default BranchController;

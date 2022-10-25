@@ -58,9 +58,9 @@ class RestaurantController {
         id,
         name,
         description,
-        imageUrl: `/files/${imageUrl}.jpg`,
+        imageUrl: `/uploads/restaurants/${imageUrl}.jpg`,
       });
-      await image.mv(`uploads/${imageUrl}.jpg`);
+      await image.mv(`uploads/restaurants/${imageUrl}.jpg`);
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
@@ -87,9 +87,9 @@ class RestaurantController {
     restaurant.description = description || restaurant.description;
     if (brandImage) {
       const imageUrl = v4();
-      await unlink(`uploads/${restaurant.imageUrl.split("/")[1]}`);
-      await brandImage?.mv(`uploads/${imageUrl}.jpg`);
-      restaurant.imageUrl = `/files/${imageUrl}.jpg`;
+      await unlink(restaurant.imageUrl.slice(1));
+      await brandImage?.mv(`uploads/restaurants/${imageUrl}.jpg`);
+      restaurant.imageUrl = `/uploads/restaurants/${imageUrl}.jpg`;
     }
     try {
       await this.repository.save(restaurant);
@@ -112,7 +112,7 @@ class RestaurantController {
       });
     }
     try {
-      await unlink(`uploads/${restaurant.imageUrl.split("/")[1]}`);
+      await unlink(restaurant.imageUrl.slice(1));
       await this.repository.delete(restaurant);
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -125,4 +125,4 @@ class RestaurantController {
   };
 }
 
-export default new RestaurantController();
+export default RestaurantController;

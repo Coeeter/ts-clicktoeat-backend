@@ -1,12 +1,18 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-["DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME", "PORT"].forEach(
-  name => {
-    if (process.env[name]) return;
-    throw new Error(`Environment variable ${name} is missing`);
-  }
-);
+[
+  "DB_HOST",
+  "DB_PORT",
+  "DB_USER",
+  "DB_PASSWORD",
+  "DB_NAME",
+  "PORT",
+  "SECRET_KEY",
+].forEach(name => {
+  if (process.env[name]) return;
+  throw new Error(`Environment variable ${name} is missing`);
+});
 
 const config = {
   database: {
@@ -18,6 +24,7 @@ const config = {
   },
   server: {
     port: parseInt(process.env.PORT!),
+    secret: process.env.SECRET_KEY!,
   },
 };
 
