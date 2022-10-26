@@ -61,7 +61,15 @@ class CommentController {
       });
     }
     const id = v4();
-    const { review, rating } = req.body;
+    const { review, rating, parentComment } = req.body;
+    try {
+      if (parentComment)
+        await this.commentRepository.findOneByOrFail({ id: parentComment });
+    } catch (e) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Cannot find comment with id " + parentComment,
+      });
+    }
     try {
       await this.commentRepository.save({
         id,
@@ -69,6 +77,7 @@ class CommentController {
         restaurant,
         rating,
         review,
+        parentComment,
       });
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

@@ -20,6 +20,11 @@ class Comment {
   @Column()
   rating!: number;
 
+  @Column({
+    default: null,
+  })
+  parentComment!: string;
+
   @CreateDateColumn({
     type: "timestamp",
     default: () => "CURRENT_TIMESTAMP(6)",
