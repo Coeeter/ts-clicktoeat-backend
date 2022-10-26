@@ -7,7 +7,7 @@ const commentController = new CommentController();
 const commentValidator = new CommentValidator();
 const authValidator = new AuthValidator();
 
-router.get("/", commentController.getAllComments);
+router.get("/", commentController.getComments);
 
 router.post(
   "/",

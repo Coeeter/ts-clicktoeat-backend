@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
@@ -20,9 +22,7 @@ class Comment {
   @Column()
   rating!: number;
 
-  @Column({
-    default: null,
-  })
+  @Column({ default: null })
   parentComment!: string;
 
   @CreateDateColumn({
@@ -51,6 +51,20 @@ class Comment {
     eager: true,
   })
   restaurant!: Restaurant;
+
+  @ManyToMany(() => User, user => user.likedComments, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable()
+  likes!: User[];
+
+  @ManyToMany(() => User, user => user.dislikedComments, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  @JoinTable()
+  dislikes!: User[];
 }
 
 export default Comment;

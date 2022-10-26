@@ -19,7 +19,7 @@ class CommentController {
     this.restaurantRepository = restaurantRepository;
   }
 
-  public getAllComments = async (req: Request, res: Response) => {
+  public getComments = async (req: Request, res: Response) => {
     const { u, r } = req.query;
     if (u && r)
       return res.status(StatusCodes.BAD_REQUEST).json({
@@ -30,16 +30,20 @@ class CommentController {
         const result = await this.commentRepository.findBy({
           user: { id: u.toString() },
         });
-        return res.status(StatusCodes.OK).json(result);
+        return res
+          .status(StatusCodes.OK)
+          .json(result.map(this.transformComment));
       }
       if (r) {
         const result = await this.commentRepository.findBy({
           restaurant: { id: r.toString() },
         });
-        return res.status(StatusCodes.OK).json(result);
+        return res
+          .status(StatusCodes.OK)
+          .json(result.map(this.transformComment));
       }
       const result = await this.commentRepository.find();
-      res.status(StatusCodes.OK).json(result);
+      res.status(StatusCodes.OK).json(result.map(this.transformComment));
     } catch (e) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
@@ -117,7 +121,7 @@ class CommentController {
         error: e,
       });
     }
-    res.status(StatusCodes.OK).json(comment);
+    res.status(StatusCodes.OK).json(this.transformComment(comment));
   };
 
   public deleteComment = async (req: Request, res: Response) => {
@@ -146,6 +150,16 @@ class CommentController {
     res.status(StatusCodes.OK).json({
       message: "Deleted comment with id " + id,
     });
+  };
+
+  private transformComment = (comment: Comment) => {
+    return {
+      ...comment,
+      user: {
+        ...comment.user,
+        password: undefined,
+      },
+    };
   };
 }
 

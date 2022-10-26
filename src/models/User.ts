@@ -1,6 +1,13 @@
 import { compare, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryColumn,
+} from "typeorm";
 import config from "../config/EnvConfig";
 import Comment from "./Comment";
 import Restaurant from "./Restaurant";
@@ -31,6 +38,18 @@ class User {
   })
   @JoinTable()
   favoriteRestaurants!: Restaurant[];
+
+  @ManyToMany(() => Comment, comment => comment.likes, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  likedComments!: Comment[];
+
+  @ManyToMany(() => Comment, comment => comment.dislikes, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE",
+  })
+  dislikedComments!: Comment[];
 
   public setPassword = async (password: string) => {
     this.password = await hash(password, 10);
