@@ -1,7 +1,8 @@
 import { compare, hash } from "bcrypt";
 import { sign } from "jsonwebtoken";
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import config from "../config/EnvConfig";
+import Comment from "./Comment";
 
 @Entity()
 class User {
@@ -21,6 +22,9 @@ class User {
     default: null,
   })
   image!: string;
+
+  @OneToMany(() => Comment, comment => comment.user)
+  comments!: Comment[];
 
   public setPassword = async (password: string) => {
     this.password = await hash(password, 10);

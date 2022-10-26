@@ -18,6 +18,7 @@ class Branch {
   @ManyToOne(() => Restaurant, restaurant => restaurant.branches, {
     eager: true,
     onDelete: "CASCADE",
+    onUpdate: "CASCADE",
   })
   restaurant!: Restaurant;
 }

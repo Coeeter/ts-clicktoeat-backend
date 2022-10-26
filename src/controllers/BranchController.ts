@@ -82,7 +82,9 @@ class BranchController {
       });
     }
     try {
-      await this.branchRepository.delete(branch);
+      await this.branchRepository.delete({
+        id: branch.id,
+      });
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,

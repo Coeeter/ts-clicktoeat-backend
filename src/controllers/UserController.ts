@@ -78,10 +78,10 @@ class UserController {
     const image = [req.files?.image].flat()[0];
     if (!username && !email && !password && !image) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Need at least one field to update!",
+        error: "Need at least one field to update!",
       });
     }
-    const user = req.user!
+    const user = req.user!;
     if (username) user.username = username;
     if (email) user.email = username;
     if (password) user.setPassword(password);
@@ -128,7 +128,7 @@ class UserController {
 
   public deleteUser = async (req: Request, res: Response) => {
     const { password } = req.body;
-    let user = req.user!
+    let user = req.user!;
     const isCorrectPassword = await user.comparePasswords(password);
     if (!isCorrectPassword) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
@@ -136,8 +136,9 @@ class UserController {
       });
     }
     try {
-      await unlink(user.image.slice(1));
+      if (user.image) await unlink(user.image.slice(1));
       await this.repository.delete({
+        id: user.id,
         username: user.username,
         email: user.email,
       });

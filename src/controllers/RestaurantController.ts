@@ -113,7 +113,10 @@ class RestaurantController {
     }
     try {
       await unlink(restaurant.imageUrl.slice(1));
-      await this.repository.delete(restaurant);
+      await this.repository.delete({
+        id: restaurant.id,
+        name: restaurant.name,
+      });
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
