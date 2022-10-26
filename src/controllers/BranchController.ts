@@ -75,6 +75,7 @@ class BranchController {
     try {
       branch = await this.branchRepository.findOneByOrFail({
         id: branchId,
+        restaurant: { id: restaurantId },
       });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({

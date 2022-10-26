@@ -7,34 +7,66 @@ const userController = new UserController();
 const userValidator = new UserValidator();
 const authValidator = new AuthValidator();
 
+/**
+ * Get all users
+ */
 router.get("/", userController.getAllUsers);
 
+/**
+ * Get Account details by id
+ * Provide user id in url
+ */
 router.get("/:id", userController.getUserById);
 
+/**
+ * Token Validation (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
+ * Can call this route to check if token from logging in is still valid.
+ * Returns the profile of user associated with token if token is valid
+ */
 router.get(
   "/validate-token",
   authValidator.checkIfTokenExistsAndIsValid,
   userController.validateIfUserIsStillLoggedIn
 );
 
+/**
+ * Login user.
+ * Provide email field and password field in body
+ * Returns token if successful
+ */
 router.post(
   "/login",
   userValidator.getValidators("login"),
   userController.loginUser
 );
 
+/**
+ * Create account 
+ * Required email, password, username in body
+ * Optional to send profile photo with name of image
+ * returns token if successful
+ */
 router.post(
   "/create-account",
   userValidator.getValidators("create"),
   userController.createUser
 );
 
+/**
+ * Update Account (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
+ * Require at least one field (email, password, username, image)
+ * returns token if successful
+ */
 router.put(
   "/",
   authValidator.checkIfTokenExistsAndIsValid,
   userController.updateUser
 );
 
+/**
+ * Delete Account (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
+ * Requires password field
+ */
 router.delete(
   "/",
   authValidator.checkIfTokenExistsAndIsValid,
