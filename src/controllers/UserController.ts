@@ -4,18 +4,23 @@ import { Repository } from "typeorm";
 import { v4 } from "uuid";
 import { unlink } from "fs/promises";
 import database from "../config/DatabaseConfig";
-import { User } from "../models";
+import { Restaurant, User } from "../models";
 
 class UserController {
-  private repository: Repository<User>;
+  private userRepository: Repository<User>;
+  private restaurantRepository: Repository<Restaurant>;
 
-  constructor(repository: Repository<User> = database.getRepository(User)) {
-    this.repository = repository;
+  constructor(
+    userRepository = database.getRepository(User),
+    restaurantRepository = database.getRepository(Restaurant)
+  ) {
+    this.userRepository = userRepository;
+    this.restaurantRepository = restaurantRepository;
   }
 
   public getAllUsers = async (req: Request, res: Response) => {
     try {
-      const users = await this.repository
+      const users = await this.userRepository
         .createQueryBuilder("user")
         .select(["user.id", "user.username", "user.email", "user.image"])
         .getMany();
@@ -34,7 +39,7 @@ class UserController {
   ) => {
     const id = req.params.id;
     try {
-      const user = await this.repository
+      const user = await this.userRepository
         .createQueryBuilder("user")
         .select(["user.id", "user.username", "user.email", "user.image"])
         .where("user.id = :id", { id })
@@ -62,7 +67,7 @@ class UserController {
         user.image = `/uploads/users/${name}.jpg`;
         await image.mv(`uploads/users/${name}.jpg`);
       }
-      await this.repository.insert(user);
+      await this.userRepository.insert(user);
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: e,
@@ -94,9 +99,9 @@ class UserController {
         user.image = `/uploads/users/${name}.jpg`;
         await image.mv(`uploads/users/${name}.jpg`);
       }
-      await this.repository.save(user);
+      await this.userRepository.save(user);
     } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
       });
     }
@@ -109,7 +114,7 @@ class UserController {
     const { email, password } = req.body;
     let user;
     try {
-      user = await this.repository.findOneByOrFail({ email });
+      user = await this.userRepository.findOneByOrFail({ email });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: `Cannot find user with email ${email}`,
@@ -137,7 +142,7 @@ class UserController {
     }
     try {
       if (user.image) await unlink(user.image.slice(1));
-      await this.repository.delete({
+      await this.userRepository.delete({
         id: user.id,
         username: user.username,
         email: user.email,
@@ -164,6 +169,95 @@ class UserController {
         error: "Invalid token provided",
       });
     }
+  };
+
+  public getUserFavorites = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    try {
+      const result = await this.userRepository.findOne({
+        where: { id },
+        relations: { favoriteRestaurants: true },
+      });
+      res.status(StatusCodes.OK).json(result?.favoriteRestaurants ?? []);
+    } catch (e) {
+      console.log(e);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: e,
+      });
+    }
+  };
+
+  public addFavorite = async (req: Request, res: Response) => {
+    const restaurantId = req.params.id;
+    let restaurant;
+    try {
+      restaurant = await this.restaurantRepository.findOneByOrFail({
+        id: restaurantId,
+      });
+    } catch (e) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Invalid restaurant id provided",
+      });
+    }
+    let user;
+    try {
+      user = await this.userRepository.findOneOrFail({
+        where: { id: req.user!.id },
+        relations: { favoriteRestaurants: true },
+      });
+    } catch (e) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Invalid token provided",
+      });
+    }
+    if (
+      user?.favoriteRestaurants &&
+      user?.favoriteRestaurants.map(item => item.id).includes(restaurantId)
+    )
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Already favorited restaurant with id " + restaurantId,
+      });
+    try {
+      await this.userRepository.save({
+        ...user,
+        favoriteRestaurants: [...(user?.favoriteRestaurants ?? []), restaurant],
+      });
+    } catch (e) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: e,
+      });
+    }
+    res.status(StatusCodes.OK).json({
+      message: "Successfully favorited restaurant with id " + restaurantId,
+    });
+  };
+
+  public deleteFavorite = async (req: Request, res: Response) => {
+    const restaurantId = req.params.id;
+    let user;
+    try {
+      user = await this.userRepository.findOneOrFail({
+        where: { id: req.user!.id },
+        relations: { favoriteRestaurants: true },
+      });
+    } catch (e) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: "Invalid token provided",
+      });
+    }
+    user.favoriteRestaurants = user.favoriteRestaurants.filter(item => {
+      return item.id !== restaurantId;
+    });
+    try {
+      await this.userRepository.save(user);
+    } catch (e) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: e,
+      });
+    }
+    res.status(StatusCodes.OK).json({
+      message: `Successfully removed restaurant from favorites`,
+    });
   };
 }
 

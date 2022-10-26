@@ -126,6 +126,28 @@ class RestaurantController {
       message: `Deleted Restaurant with id ${id}`,
     });
   };
+
+  public getFavoriteUsers = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    try {
+      const result = await this.repository.findOneOrFail({
+        where: { id },
+        relations: { favoriteUsers: true },
+      });
+      res.status(StatusCodes.OK).json(
+        result.favoriteUsers.map(item => {
+          return {
+            ...item,
+            password: undefined,
+          };
+        })
+      );
+    } catch (e) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        error: `Could not find restaurant with id ${id}`,
+      });
+    }
+  };
 }
 
 export default RestaurantController;
