@@ -11,8 +11,6 @@ router.get("/", userController.getAllUsers);
 
 router.get("/:id", userController.getUserById);
 
-router.get("/favorites/:id", userController.getUserFavorites);
-
 router.get(
   "/validate-token",
   authValidator.checkIfTokenExistsAndIsValid,
@@ -31,12 +29,6 @@ router.post(
   userController.createUser
 );
 
-router.post(
-  "/favorites/:id",
-  authValidator.checkIfTokenExistsAndIsValid,
-  userController.addFavorite
-);
-
 router.put(
   "/",
   authValidator.checkIfTokenExistsAndIsValid,
@@ -48,12 +40,6 @@ router.delete(
   authValidator.checkIfTokenExistsAndIsValid,
   userValidator.getValidators("delete"),
   userController.deleteUser
-);
-
-router.delete(
-  "/favorites/:id",
-  authValidator.checkIfTokenExistsAndIsValid,
-  userController.deleteFavorite
 );
 
 export default router;

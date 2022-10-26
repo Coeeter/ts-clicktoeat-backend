@@ -11,8 +11,6 @@ router.get("/", restaurantController.getAllRestaurants);
 
 router.get("/:id", restaurantController.getRestaurantById);
 
-router.get("/favorites/:id", restaurantController.getFavoriteUsers);
-
 router.post(
   "/",
   authValidator.checkIfTokenExistsAndIsValid,
