@@ -32,7 +32,7 @@ class User {
 
   @OneToOne(() => Image, {
     onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
+    onDelete: 'SET NULL',
     eager: true,
   })
   @JoinColumn()

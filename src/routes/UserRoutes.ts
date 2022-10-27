@@ -56,6 +56,7 @@ router.post(
 /**
  * Update Account (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
  * Require at least one field (email, password, username, image)
+ * Optional field deleteImage -> if deleteImage == true & image == null, image will be deleted
  * returns token if successful
  */
 router.put(

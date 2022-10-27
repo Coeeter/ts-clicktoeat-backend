@@ -26,7 +26,7 @@ class Restaurant {
 
   @OneToOne(() => Image, {
     onUpdate: 'CASCADE',
-    onDelete: 'NO ACTION',
+    onDelete: 'CASCADE',
     eager: true,
   })
   @JoinColumn()

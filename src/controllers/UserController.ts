@@ -66,12 +66,9 @@ class UserController {
     await user.setPassword(password);
     try {
       if (image) {
-        const key = `users/${v4()}.jpg`;
-        const { uploadedUrl, error } = await uploadImageToS3(key, image.data);
-        if (error || !uploadedUrl)
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            error: error ?? 'Unable to upload image',
-          });
+        const result = await this.uploadImage(req, res, image.data);
+        if (!result) return;
+        const { key, uploadedUrl } = result;
         const userImage = new Image();
         userImage.key = key;
         userImage.url = uploadedUrl;
@@ -90,9 +87,13 @@ class UserController {
   };
 
   public updateUser = async (req: Request, res: Response) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, deleteImage } = req.body;
     const image = [req.files?.image].flat()[0];
-    if (!username && !email && !password && !image) {
+    if (image && deleteImage)
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: 'Invalid body given. Cannot delete image, when given new image',
+      });
+    if (!username && !email && !password && !image && !deleteImage) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: 'Need at least one field to update!',
       });
@@ -102,25 +103,21 @@ class UserController {
     if (email) user.email = username;
     if (password) user.setPassword(password);
     try {
+      if (deleteImage || (image && user.image)) {
+        const result = this.deleteImage(req, res, user.image.key);
+        if (!result) return;
+      }
       if (image) {
-        if (user.image) {
-          const deletionResult = await deleteImageFromS3(user.image.key);
-          if (deletionResult && deletionResult.error)
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-              error: deletionResult.error,
-            });
-        }
-        const key = `users/${v4()}.jpg`;
-        const { uploadedUrl, error } = await uploadImageToS3(key, image.data);
-        if (error || !uploadedUrl)
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            error: error ?? 'Unable to upload image',
-          });
-        user.image.key = key;
-        user.image.url = uploadedUrl;
+        const result = await this.uploadImage(req, res, image.data);
+        if (!result || !result.uploadedUrl) return;
+        user.image.key = result.key;
+        user.image.url = result.uploadedUrl;
         await this.imageRepository.save(user.image);
       }
       await this.userRepository.save(user);
+      if (deleteImage) {
+        await this.imageRepository.delete(user.image);
+      }
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
@@ -163,11 +160,8 @@ class UserController {
     }
     try {
       if (user.image) {
-        const deletionResult = await deleteImageFromS3(user.image.key);
-        if (deletionResult && deletionResult.error)
-          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            error: deletionResult.error,
-          });
+        const result = this.deleteImage(req, res, user.image.key);
+        if (!result) return;
         await this.imageRepository.delete(user.image);
       }
       await this.userRepository.delete({
@@ -197,6 +191,29 @@ class UserController {
         error: 'Invalid token provided',
       });
     }
+  };
+
+  private deleteImage = async (req: Request, res: Response, key: string) => {
+    const deletionResult = await deleteImageFromS3(key);
+    if (deletionResult && deletionResult.error) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: deletionResult.error,
+      });
+      return false;
+    }
+    return true;
+  };
+
+  private uploadImage = async (req: Request, res: Response, buffer: Buffer) => {
+    const key = `users/${v4()}.jpg`;
+    const { uploadedUrl, error } = await uploadImageToS3(key, buffer);
+    if (error || !uploadedUrl) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: error ?? 'Unable to upload image',
+      });
+      return;
+    }
+    return { key, uploadedUrl };
   };
 }
 
