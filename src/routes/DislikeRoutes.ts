@@ -1,6 +1,7 @@
-import { Router } from "express";
-import { DislikeController } from "../controllers";
-import { AuthValidator } from "../middleware";
+import { Router } from 'express';
+
+import { DislikeController } from '../controllers';
+import { AuthValidator } from '../middleware';
 
 const router = Router();
 const dislikeController = new DislikeController();
@@ -13,7 +14,7 @@ const authValidator = new AuthValidator();
  *    - u: "/api/dislikes?u=$USER_ID" -> get Comments which user has disliked
  *    - c: "/api/dislikes?c=$COMMENT_ID" -> get Users which disliked the comment
  */
-router.get("/", dislikeController.getDislikes);
+router.get('/', dislikeController.getDislikes);
 
 /**
  * Create Dislike (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
@@ -21,7 +22,7 @@ router.get("/", dislikeController.getDislikes);
  * Automatically deletes like if exists
  */
 router.post(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   dislikeController.createDislike
 );
@@ -31,7 +32,7 @@ router.post(
  * Provide comment id in url
  */
 router.delete(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   dislikeController.deleteDislike
 );

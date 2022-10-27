@@ -1,10 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { verify } from "jsonwebtoken";
-import config from "../config/EnvConfig";
-import database from "../config/DatabaseConfig";
-import { User } from "../models";
-import { Repository } from "typeorm";
+import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { verify } from 'jsonwebtoken';
+import { Repository } from 'typeorm';
+
+import database from '../config/DatabaseConfig';
+import config from '../config/EnvConfig';
+import { User } from '../models';
 
 class AuthValidator {
   private repository: Repository<User>;
@@ -21,13 +22,13 @@ class AuthValidator {
     const authorization = req.headers.authorization;
     if (!authorization || !authorization.length) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "Login before continuing",
+        message: 'Login before continuing',
       });
     }
-    const [bearer, token] = authorization.split(" ");
-    if (bearer != "Bearer" || !token) {
+    const [bearer, token] = authorization.split(' ');
+    if (bearer != 'Bearer' || !token) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "Login before continuing",
+        message: 'Login before continuing',
       });
     }
     let user;
@@ -45,7 +46,7 @@ class AuthValidator {
       });
     } catch (e) {
       return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: "Invalid token provided",
+        message: 'Invalid token provided',
       });
     }
     req.user = user;

@@ -7,9 +7,10 @@ import {
   ManyToOne,
   PrimaryColumn,
   UpdateDateColumn,
-} from "typeorm";
-import Restaurant from "./Restaurant";
-import User from "./User";
+} from 'typeorm';
+
+import Restaurant from './Restaurant';
+import User from './User';
 
 @Entity()
 class Comment {
@@ -26,42 +27,42 @@ class Comment {
   parentComment!: string;
 
   @CreateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP(6)",
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at!: Date;
 
   @UpdateDateColumn({
-    type: "timestamp",
-    default: () => "CURRENT_TIMESTAMP(6)",
-    onUpdate: "CURRENT_TIMESTAMP(6)",
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updated_at!: Date;
 
   @ManyToOne(() => User, user => user.comments, {
     eager: true,
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   user!: User;
 
   @ManyToOne(() => Restaurant, restaurant => restaurant.comments, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
     eager: true,
   })
   restaurant!: Restaurant;
 
   @ManyToMany(() => User, user => user.likedComments, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinTable()
   likes!: User[];
 
   @ManyToMany(() => User, user => user.dislikedComments, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinTable()
   dislikes!: User[];

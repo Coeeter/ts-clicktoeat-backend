@@ -1,6 +1,7 @@
-import { Router } from "express";
-import { RestaurantController } from "../controllers";
-import { AuthValidator, RestaurantValidator } from "../middleware";
+import { Router } from 'express';
+
+import { RestaurantController } from '../controllers';
+import { AuthValidator, RestaurantValidator } from '../middleware';
 
 const router = Router();
 const restaurantController = new RestaurantController();
@@ -10,13 +11,13 @@ const authValidator = new AuthValidator();
 /**
  * Get all Restaurants
  */
-router.get("/", restaurantController.getAllRestaurants);
+router.get('/', restaurantController.getAllRestaurants);
 
 /**
  * Get One Restaurant by its Id
  * Provide id in url
  */
-router.get("/:id", restaurantController.getRestaurantById);
+router.get('/:id', restaurantController.getRestaurantById);
 
 /**
  * Create Restaurant (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
@@ -24,7 +25,7 @@ router.get("/:id", restaurantController.getRestaurantById);
  * returns insertId of restaurant in DB if successful
  */
 router.post(
-  "/",
+  '/',
   authValidator.checkIfTokenExistsAndIsValid,
   restarantValidator.getValidators(),
   restaurantController.createRestaurant
@@ -36,7 +37,7 @@ router.post(
  * returns updated restaurant object if successful
  */
 router.put(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   restaurantController.updateRestaurant
 );
@@ -46,7 +47,7 @@ router.put(
  * Provide restaurant id in url
  */
 router.delete(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   restaurantController.deleteRestaurant
 );

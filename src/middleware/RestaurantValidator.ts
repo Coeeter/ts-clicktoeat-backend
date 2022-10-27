@@ -1,24 +1,25 @@
-import { NextFunction, Request, Response } from "express";
-import { body, validationResult } from "express-validator";
-import { StatusCodes } from "http-status-codes";
-import { Restaurant } from "../models";
-import database from "../config/DatabaseConfig";
+import { NextFunction, Request, Response } from 'express';
+import { body, validationResult } from 'express-validator';
+import { StatusCodes } from 'http-status-codes';
+
+import database from '../config/DatabaseConfig';
+import { Restaurant } from '../models';
 
 class RestaurantValidator {
-  private _checkName = body("name").custom(async name => {
-    if (!name) throw new Error("Field name is missing");
+  private _checkName = body('name').custom(async name => {
+    if (!name) throw new Error('Field name is missing');
     const repository = database.getRepository(Restaurant);
     try {
       await repository.findOneByOrFail({ name });
     } catch (e) {
       return Promise.resolve();
     }
-    return Promise.reject("Restaurant name already taken");
+    return Promise.reject('Restaurant name already taken');
   });
 
-  private _checkDescription = body("description")
+  private _checkDescription = body('description')
     .exists()
-    .withMessage("Field description is missing");
+    .withMessage('Field description is missing');
 
   private _handleErrors = (req: Request, res: Response, next: NextFunction) => {
     const validationErrors = validationResult(req)
@@ -30,13 +31,13 @@ class RestaurantValidator {
     const errors = [...validationErrors];
     if (!req.files?.brandImage) {
       errors.push({
-        error: "Image brandImage is missing",
-        field: "brandImage",
+        error: 'Image brandImage is missing',
+        field: 'brandImage',
       });
     }
     if (errors.length) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Errors in fields provided",
+        message: 'Errors in fields provided',
         errors: errors,
       });
     }

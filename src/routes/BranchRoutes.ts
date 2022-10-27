@@ -1,6 +1,7 @@
-import { Router } from "express";
-import { BranchController } from "../controllers";
-import { AuthValidator, BranchValidator } from "../middleware";
+import { Router } from 'express';
+
+import { BranchController } from '../controllers';
+import { AuthValidator, BranchValidator } from '../middleware';
 
 const router = Router();
 const branchController = new BranchController();
@@ -12,7 +13,7 @@ const authValidator = new AuthValidator();
  * Branches of specific restaurants are automatically added to restaurant object recieved from the server
  * Use this route to get all branches so can display nearest restaurant to user
  */
-router.get("/", branchController.getAllBranches);
+router.get('/', branchController.getAllBranches);
 
 /**
  * Create Branch (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
@@ -21,9 +22,9 @@ router.get("/", branchController.getAllBranches);
  * returns insertId of branch saved in db
  */
 router.post(
-  "/",
+  '/',
   authValidator.checkIfTokenExistsAndIsValid,
-  branchValidator.getValidators("save"),
+  branchValidator.getValidators('save'),
   branchController.saveBranch
 );
 
@@ -33,9 +34,9 @@ router.post(
  * Requires restaurant id in query r -> "api/branches/$BRANCH_ID?r=$RESTAURANT_ID"
  */
 router.delete(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
-  branchValidator.getValidators("delete"),
+  branchValidator.getValidators('delete'),
   branchController.deleteBranch
 );
 

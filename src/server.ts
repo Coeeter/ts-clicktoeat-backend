@@ -1,8 +1,9 @@
-import express, { Express } from "express";
-import config from "./config/EnvConfig";
-import fileUpload from "express-fileupload";
-import database from "./config/DatabaseConfig";
-import routes from "./routes";
+import express, { Express } from 'express';
+import fileUpload from 'express-fileupload';
+
+import database from './config/DatabaseConfig';
+import config from './config/EnvConfig';
+import routes from './routes';
 
 (async () => {
   try {
@@ -17,7 +18,7 @@ import routes from "./routes";
   app.use(express.urlencoded({ extended: false }));
   app.use(fileUpload());
 
-  app.use("/", routes);
+  app.use('/', routes);
 
   app.listen(config.server.port, () => {
     console.log(`Server is running on port ${config.server.port}`);

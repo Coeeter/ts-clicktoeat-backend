@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
-import { Repository } from "typeorm";
-import { StatusCodes } from "http-status-codes";
-import { UploadedFile } from "express-fileupload";
-import { v4 } from "uuid";
-import { Restaurant } from "../models";
-import database from "../config/DatabaseConfig";
-import { deleteImageFromS3, uploadImageToS3 } from "../config/S3Config";
-import Image from "../models/Image";
+import { Request, Response } from 'express';
+import { UploadedFile } from 'express-fileupload';
+import { StatusCodes } from 'http-status-codes';
+import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
+
+import database from '../config/DatabaseConfig';
+import { deleteImageFromS3, uploadImageToS3 } from '../config/S3Config';
+import { Restaurant } from '../models';
+import Image from '../models/Image';
 
 class RestaurantController {
   private repository: Repository<Restaurant>;
@@ -63,7 +64,7 @@ class RestaurantController {
       const { uploadedUrl, error } = await uploadImageToS3(key, image.data);
       if (error || !uploadedUrl)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          error: error ?? "Unable to upload image",
+          error: error ?? 'Unable to upload image',
         });
       const restaurantImage = new Image();
       restaurantImage.key = key;
@@ -112,7 +113,7 @@ class RestaurantController {
       );
       if (error || !uploadedUrl)
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-          error: error ?? "Unable to upload image",
+          error: error ?? 'Unable to upload image',
         });
       restaurant.image.key = key;
       restaurant.image.url = uploadedUrl;

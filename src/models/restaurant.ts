@@ -1,16 +1,17 @@
 import {
-  Entity,
   Column,
-  PrimaryColumn,
-  OneToMany,
-  ManyToMany,
-  OneToOne,
+  Entity,
   JoinColumn,
-} from "typeorm";
-import Branch from "./Branch";
-import Comment from "./Comment";
-import Image from "./Image";
-import User from "./User";
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
+
+import Branch from './Branch';
+import Comment from './Comment';
+import Image from './Image';
+import User from './User';
 
 @Entity()
 class Restaurant {
@@ -24,7 +25,8 @@ class Restaurant {
   description!: string;
 
   @OneToOne(() => Image, {
-    onUpdate: "CASCADE",
+    onUpdate: 'CASCADE',
+    onDelete: 'NO ACTION',
     eager: true,
   })
   @JoinColumn()
@@ -37,8 +39,8 @@ class Restaurant {
   comments!: Comment[];
 
   @ManyToMany(() => User, user => user.favoriteRestaurants, {
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   favoriteUsers!: User[];
 }

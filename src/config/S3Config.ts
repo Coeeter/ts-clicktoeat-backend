@@ -1,5 +1,6 @@
-import { S3 } from "aws-sdk";
-import config from "./EnvConfig";
+import { S3 } from 'aws-sdk';
+
+import config from './EnvConfig';
 
 const s3 = new S3({
   accessKeyId: config.aws.accessKey,
@@ -13,10 +14,12 @@ export const uploadImageToS3 = async (key: string, blob: Buffer) => {
     Body: blob,
   };
   try {
-    const uploadedImage = await s3.upload({
-      ...uploadConfig,
-      ContentType: "image/jpeg"
-    }).promise();
+    const uploadedImage = await s3
+      .upload({
+        ...uploadConfig,
+        ContentType: 'image/jpeg',
+      })
+      .promise();
     return { uploadedUrl: uploadedImage.Location };
   } catch (e) {
     console.log(e);

@@ -1,21 +1,21 @@
-import { NextFunction, Request, Response } from "express";
-import { body, query, validationResult } from "express-validator";
-import { StatusCodes } from "http-status-codes";
+import { NextFunction, Request, Response } from 'express';
+import { body, query, validationResult } from 'express-validator';
+import { StatusCodes } from 'http-status-codes';
 
 class CommentValidator {
-  private _checkRestaurant = query("r")
+  private _checkRestaurant = query('r')
     .exists()
-    .withMessage("Query r is missing");
+    .withMessage('Query r is missing');
 
-  private _checkReview = body("review")
+  private _checkReview = body('review')
     .exists()
-    .withMessage("Field review is missing");
+    .withMessage('Field review is missing');
 
-  private _checkRating = body("rating")
+  private _checkRating = body('rating')
     .exists()
-    .withMessage("Field rating is missing")
+    .withMessage('Field rating is missing')
     .isNumeric()
-    .withMessage("Field rating should be a number");
+    .withMessage('Field rating should be a number');
 
   private _handleErrors = (req: Request, res: Response, next: NextFunction) => {
     const errors: { error: string; field: string }[] = [];
@@ -31,7 +31,7 @@ class CommentValidator {
       });
     if (errors.length) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Errors in fields provided",
+        message: 'Errors in fields provided',
         errors,
       });
     }

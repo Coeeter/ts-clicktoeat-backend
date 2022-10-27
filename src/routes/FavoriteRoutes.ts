@@ -1,6 +1,7 @@
-import { Router } from "express";
-import { FavoriteController } from "../controllers";
-import { AuthValidator } from "../middleware";
+import { Router } from 'express';
+
+import { FavoriteController } from '../controllers';
+import { AuthValidator } from '../middleware';
 
 const router = Router();
 const favoriteController = new FavoriteController();
@@ -11,21 +12,21 @@ const authValidator = new AuthValidator();
  * Provide user id in url
  * returns the restaurants which user has favorited
  */
-router.get("/users/:id", favoriteController.getUserFavorites);
+router.get('/users/:id', favoriteController.getUserFavorites);
 
 /**
  * Get Users who Favorite a specific restaurant
  * Provide restaurant id in url
  * returns the users who favorited the specific restaurant
  */
-router.get("/restaurants/:id", favoriteController.getFavoriteUsers);
+router.get('/restaurants/:id', favoriteController.getFavoriteUsers);
 
 /**
  * Create Favorite (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
  * Provide restaurant id in url
  */
 router.post(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   favoriteController.addFavorite
 );
@@ -35,7 +36,7 @@ router.post(
  * Provide restaurant id in url
  */
 router.delete(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   favoriteController.deleteFavorite
 );

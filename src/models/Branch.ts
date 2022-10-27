@@ -1,15 +1,16 @@
-import { Entity, Column, PrimaryColumn, ManyToOne } from "typeorm";
-import Restaurant from "./Restaurant";
+import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+
+import Restaurant from './Restaurant';
 
 @Entity()
 class Branch {
   @PrimaryColumn()
   id!: string;
 
-  @Column({ type: "double" })
+  @Column({ type: 'double' })
   latitude!: number;
 
-  @Column({ type: "double" })
+  @Column({ type: 'double' })
   longitude!: number;
 
   @Column()
@@ -17,8 +18,8 @@ class Branch {
 
   @ManyToOne(() => Restaurant, restaurant => restaurant.branches, {
     eager: true,
-    onDelete: "CASCADE",
-    onUpdate: "CASCADE",
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   restaurant!: Restaurant;
 }

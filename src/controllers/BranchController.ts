@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { Repository } from "typeorm";
-import { v4 } from "uuid";
-import { Branch, Restaurant } from "../models";
-import database from "../config/DatabaseConfig";
+import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
+
+import database from '../config/DatabaseConfig';
+import { Branch, Restaurant } from '../models';
 
 class BranchController {
   private branchRepository: Repository<Branch>;

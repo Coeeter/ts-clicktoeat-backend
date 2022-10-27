@@ -1,17 +1,18 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+
 dotenv.config();
 
 [
-  "DB_HOST",
-  "DB_PORT",
-  "DB_USER",
-  "DB_PASSWORD",
-  "DB_NAME",
-  "PORT",
-  "SECRET_KEY",
-  "AWS_S3_ACCESS_KEY_ID",
-  "AWS_S3_SECRET_ACCESS_KEY",
-  "AWS_S3_BUCKET_NAME",
+  'DB_HOST',
+  'DB_PORT',
+  'DB_USER',
+  'DB_PASSWORD',
+  'DB_NAME',
+  'PORT',
+  'SECRET_KEY',
+  'AWS_S3_ACCESS_KEY_ID',
+  'AWS_S3_SECRET_ACCESS_KEY',
+  'AWS_S3_BUCKET_NAME',
 ].forEach(name => {
   if (process.env[name]) return;
   throw new Error(`Environment variable ${name} is missing`);

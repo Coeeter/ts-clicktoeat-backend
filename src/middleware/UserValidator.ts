@@ -1,9 +1,10 @@
-import { NextFunction, Request, Response } from "express";
-import { body, validationResult } from "express-validator";
-import { User } from "../models";
-import database from "../config/DatabaseConfig";
-import { Repository } from "typeorm";
-import { StatusCodes } from "http-status-codes";
+import { NextFunction, Request, Response } from 'express';
+import { body, validationResult } from 'express-validator';
+import { StatusCodes } from 'http-status-codes';
+import { Repository } from 'typeorm';
+
+import database from '../config/DatabaseConfig';
+import { User } from '../models';
 
 class UserValidator {
   private repository: Repository<User>;
@@ -12,44 +13,44 @@ class UserValidator {
     this.repository = repository;
   }
 
-  private _checkIfUsernameAlreadyExistsInDB = body("username").custom(
+  private _checkIfUsernameAlreadyExistsInDB = body('username').custom(
     async username => {
-      if (!username) throw new Error("Field username is missing");
+      if (!username) throw new Error('Field username is missing');
       try {
         await this.repository.findOneByOrFail({ username });
       } catch (e) {
         return Promise.resolve();
       }
-      return Promise.reject("Username already taken");
+      return Promise.reject('Username already taken');
     }
   );
 
-  private _checkEmail = body("email")
+  private _checkEmail = body('email')
     .exists()
-    .withMessage("Field email is missing")
+    .withMessage('Field email is missing')
     .isEmail()
-    .withMessage("Invalid email provided");
+    .withMessage('Invalid email provided');
 
-  private _checkIfEmailAlreadyExistsInDB = body("email").custom(async email => {
-    if (!email) throw new Error("Field email is missing");
+  private _checkIfEmailAlreadyExistsInDB = body('email').custom(async email => {
+    if (!email) throw new Error('Field email is missing');
     try {
       await this.repository.findOneByOrFail({ email });
     } catch (e) {
       return Promise.resolve();
     }
-    return Promise.reject("Email already taken");
+    return Promise.reject('Email already taken');
   });
 
-  private _checkPassword = body("password")
+  private _checkPassword = body('password')
     .exists()
-    .withMessage("Field password is missing");
+    .withMessage('Field password is missing');
 
-  private _checkPasswordWithLength = body("password").custom(async password => {
+  private _checkPasswordWithLength = body('password').custom(async password => {
     if (!password) {
-      throw new Error("Field password is missing");
+      throw new Error('Field password is missing');
     }
     if (password.length < 6) {
-      throw new Error("Password should be at least 6 characters long!");
+      throw new Error('Password should be at least 6 characters long!');
     }
     return Promise.resolve();
   });
@@ -68,20 +69,20 @@ class UserValidator {
       });
     if (errors.length) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Errors in fields provided",
+        message: 'Errors in fields provided',
         errors,
       });
     }
     next();
   };
 
-  public getValidators(route: "create" | "login" | "delete") {
+  public getValidators(route: 'create' | 'login' | 'delete') {
     switch (route) {
-      case "login":
+      case 'login':
         return [this._checkEmail, this._checkPassword, this._handleErrors];
-      case "delete":
+      case 'delete':
         return [this._checkPassword, this._handleErrors];
-      case "create":
+      case 'create':
         return [
           this._checkIfEmailAlreadyExistsInDB,
           this._checkIfUsernameAlreadyExistsInDB,

@@ -1,10 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { Repository } from "typeorm";
-import { v4 } from "uuid";
-import database from "../config/DatabaseConfig";
-import { Image, User } from "../models";
-import { deleteImageFromS3, uploadImageToS3 } from "../config/S3Config";
+import { NextFunction, Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
+
+import database from '../config/DatabaseConfig';
+import { deleteImageFromS3, uploadImageToS3 } from '../config/S3Config';
+import { Image, User } from '../models';
 
 class UserController {
   private userRepository: Repository<User>;
@@ -21,9 +22,9 @@ class UserController {
   public getAllUsers = async (req: Request, res: Response) => {
     try {
       const users = await this.userRepository
-        .createQueryBuilder("user")
-        .select(["user.id", "user.username", "user.email"])
-        .leftJoinAndSelect("user.image", "image")
+        .createQueryBuilder('user')
+        .select(['user.id', 'user.username', 'user.email'])
+        .leftJoinAndSelect('user.image', 'image')
         .getMany();
       res.status(StatusCodes.OK).json(users);
     } catch (e) {
@@ -41,10 +42,10 @@ class UserController {
     const id = req.params.id;
     try {
       const user = await this.userRepository
-        .createQueryBuilder("user")
-        .select(["user.id", "user.username", "user.email"])
-        .leftJoinAndSelect("user.image", "image")
-        .where("user.id = :id", { id })
+        .createQueryBuilder('user')
+        .select(['user.id', 'user.username', 'user.email'])
+        .leftJoinAndSelect('user.image', 'image')
+        .where('user.id = :id', { id })
         .getOne();
       if (!user) return next();
       res.status(StatusCodes.OK).json(user);
@@ -69,7 +70,7 @@ class UserController {
         const { uploadedUrl, error } = await uploadImageToS3(key, image.data);
         if (error || !uploadedUrl)
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            error: error ?? "Unable to upload image",
+            error: error ?? 'Unable to upload image',
           });
         const userImage = new Image();
         userImage.key = key;
@@ -93,7 +94,7 @@ class UserController {
     const image = [req.files?.image].flat()[0];
     if (!username && !email && !password && !image) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Need at least one field to update!",
+        error: 'Need at least one field to update!',
       });
     }
     const user = req.user!;
@@ -113,7 +114,7 @@ class UserController {
         const { uploadedUrl, error } = await uploadImageToS3(key, image.data);
         if (error || !uploadedUrl)
           return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            error: error ?? "Unable to upload image",
+            error: error ?? 'Unable to upload image',
           });
         user.image.key = key;
         user.image.url = uploadedUrl;
@@ -193,7 +194,7 @@ class UserController {
     } catch (e) {
       console.log(e);
       res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid token provided",
+        error: 'Invalid token provided',
       });
     }
   };

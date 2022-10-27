@@ -1,6 +1,7 @@
-import { Router } from "express";
-import UserController from "../controllers/UserController";
-import { AuthValidator, UserValidator } from "../middleware";
+import { Router } from 'express';
+
+import UserController from '../controllers/UserController';
+import { AuthValidator, UserValidator } from '../middleware';
 
 const router = Router();
 const userController = new UserController();
@@ -10,13 +11,13 @@ const authValidator = new AuthValidator();
 /**
  * Get all users
  */
-router.get("/", userController.getAllUsers);
+router.get('/', userController.getAllUsers);
 
 /**
  * Get Account details by id
  * Provide user id in url
  */
-router.get("/:id", userController.getUserById);
+router.get('/:id', userController.getUserById);
 
 /**
  * Token Validation (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
@@ -24,7 +25,7 @@ router.get("/:id", userController.getUserById);
  * Returns the profile of user associated with token if token is valid
  */
 router.get(
-  "/validate-token",
+  '/validate-token',
   authValidator.checkIfTokenExistsAndIsValid,
   userController.validateIfUserIsStillLoggedIn
 );
@@ -35,20 +36,20 @@ router.get(
  * Returns token if successful
  */
 router.post(
-  "/login",
-  userValidator.getValidators("login"),
+  '/login',
+  userValidator.getValidators('login'),
   userController.loginUser
 );
 
 /**
- * Create account 
+ * Create account
  * Required email, password, username in body
  * Optional to send profile photo with name of image
  * returns token if successful
  */
 router.post(
-  "/create-account",
-  userValidator.getValidators("create"),
+  '/create-account',
+  userValidator.getValidators('create'),
   userController.createUser
 );
 
@@ -58,7 +59,7 @@ router.post(
  * returns token if successful
  */
 router.put(
-  "/",
+  '/',
   authValidator.checkIfTokenExistsAndIsValid,
   userController.updateUser
 );
@@ -68,9 +69,9 @@ router.put(
  * Requires password field
  */
 router.delete(
-  "/",
+  '/',
   authValidator.checkIfTokenExistsAndIsValid,
-  userValidator.getValidators("delete"),
+  userValidator.getValidators('delete'),
   userController.deleteUser
 );
 

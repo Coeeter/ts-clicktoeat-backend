@@ -1,27 +1,27 @@
-import { Request, Response, NextFunction } from "express";
-import { body, query, validationResult } from "express-validator";
-import { StatusCodes } from "http-status-codes";
+import { NextFunction, Request, Response } from 'express';
+import { body, query, validationResult } from 'express-validator';
+import { StatusCodes } from 'http-status-codes';
 
 class BranchValidator {
-  private _checkQueryForR = query("r")
+  private _checkQueryForR = query('r')
     .exists()
-    .withMessage("Query r is missing");
+    .withMessage('Query r is missing');
 
-  private _checkAddress = body("address")
+  private _checkAddress = body('address')
     .exists()
-    .withMessage("Field address is missing");
+    .withMessage('Field address is missing');
 
-  private _checkLatitude = body("latitude")
+  private _checkLatitude = body('latitude')
     .exists()
-    .withMessage("Field latitude is missing")
+    .withMessage('Field latitude is missing')
     .isNumeric()
-    .withMessage("Field latitude should be a number");
+    .withMessage('Field latitude should be a number');
 
-  private _checkLongitude = body("longitude")
+  private _checkLongitude = body('longitude')
     .exists()
-    .withMessage("Field longitude is missing")
+    .withMessage('Field longitude is missing')
     .isNumeric()
-    .withMessage("Field longitude should be a number");
+    .withMessage('Field longitude should be a number');
 
   private _handleErrors = (req: Request, res: Response, next: NextFunction) => {
     const errors: { error: string; field: string }[] = [];
@@ -37,15 +37,15 @@ class BranchValidator {
       });
     if (errors.length) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "Errors in fields provided",
+        message: 'Errors in fields provided',
         errors,
       });
     }
     next();
   };
 
-  public getValidators(route: "save" | "delete") {
-    if (route == "save") {
+  public getValidators(route: 'save' | 'delete') {
+    if (route == 'save') {
       return [
         this._checkQueryForR,
         this._checkAddress,
@@ -54,10 +54,10 @@ class BranchValidator {
         this._handleErrors,
       ];
     }
-    if (route == "delete") {
+    if (route == 'delete') {
       return [this._checkQueryForR, this._handleErrors];
     }
-    throw new Error("Invalid route passed");
+    throw new Error('Invalid route passed');
   }
 }
 

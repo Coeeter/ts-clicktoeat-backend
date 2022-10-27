@@ -1,6 +1,7 @@
-import { Router } from "express";
-import { LikeController } from "../controllers";
-import { AuthValidator } from "../middleware";
+import { Router } from 'express';
+
+import { LikeController } from '../controllers';
+import { AuthValidator } from '../middleware';
 
 const router = Router();
 const likeController = new LikeController();
@@ -13,7 +14,7 @@ const authValidator = new AuthValidator();
  *    - u: "/api/likes?u=$USER_ID" -> get Comments which user has liked
  *    - c: "/api/likes?c=$COMMENT_ID" -> get Users which liked the comment
  */
-router.get("/", likeController.getLikes);
+router.get('/', likeController.getLikes);
 
 /**
  * Create Like (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
@@ -21,7 +22,7 @@ router.get("/", likeController.getLikes);
  * Automatically deletes dislike if exists
  */
 router.post(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   likeController.createLike
 );
@@ -31,7 +32,7 @@ router.post(
  * Provide comment id in url
  */
 router.delete(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   likeController.deleteLike
 );

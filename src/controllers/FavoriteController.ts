@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { Repository } from "typeorm";
-import database from "../config/DatabaseConfig";
-import { Restaurant, User } from "../models";
+import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { Repository } from 'typeorm';
+
+import database from '../config/DatabaseConfig';
+import { Restaurant, User } from '../models';
 
 class FavoriteController {
   private userRepository: Repository<User>;
@@ -63,7 +64,7 @@ class FavoriteController {
       });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid restaurant id provided",
+        error: 'Invalid restaurant id provided',
       });
     }
     let user;
@@ -74,7 +75,7 @@ class FavoriteController {
       });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid token provided",
+        error: 'Invalid token provided',
       });
     }
     if (
@@ -82,7 +83,7 @@ class FavoriteController {
       user?.favoriteRestaurants.map(item => item.id).includes(restaurantId)
     )
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Already favorited restaurant with id " + restaurantId,
+        error: 'Already favorited restaurant with id ' + restaurantId,
       });
     try {
       await this.userRepository.save({
@@ -95,7 +96,7 @@ class FavoriteController {
       });
     }
     res.status(StatusCodes.OK).json({
-      message: "Successfully favorited restaurant with id " + restaurantId,
+      message: 'Successfully favorited restaurant with id ' + restaurantId,
     });
   };
 
@@ -109,7 +110,7 @@ class FavoriteController {
       });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid token provided",
+        error: 'Invalid token provided',
       });
     }
     user.favoriteRestaurants = user.favoriteRestaurants.filter(item => {

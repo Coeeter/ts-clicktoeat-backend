@@ -1,8 +1,9 @@
-import { Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { Repository } from "typeorm";
-import database from "../config/DatabaseConfig";
-import { Comment, User } from "../models";
+import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { Repository } from 'typeorm';
+
+import database from '../config/DatabaseConfig';
+import { Comment, User } from '../models';
 
 class DislikeController {
   private userRepository: Repository<User>;
@@ -20,7 +21,7 @@ class DislikeController {
     const { u, c } = req.query;
     if (u && c)
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid queries provided",
+        error: 'Invalid queries provided',
       });
     try {
       if (u) {
@@ -34,7 +35,7 @@ class DislikeController {
       }
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid user id provided",
+        error: 'Invalid user id provided',
       });
     }
     try {
@@ -49,7 +50,7 @@ class DislikeController {
       }
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid comment id provided",
+        error: 'Invalid comment id provided',
       });
     }
     try {
@@ -84,7 +85,7 @@ class DislikeController {
       });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid comment id provided",
+        error: 'Invalid comment id provided',
       });
     }
     if (
@@ -92,7 +93,7 @@ class DislikeController {
       comment.dislikes.map(item => item.id).includes(req.user!.id)
     ) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "User already disliked this comment",
+        error: 'User already disliked this comment',
       });
     }
     if (
@@ -114,7 +115,7 @@ class DislikeController {
       });
     }
     res.status(StatusCodes.OK).json({
-      message: "Successfully disliked comment with id " + commentId,
+      message: 'Successfully disliked comment with id ' + commentId,
     });
   };
 
@@ -128,7 +129,7 @@ class DislikeController {
       });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid comment id provided",
+        error: 'Invalid comment id provided',
       });
     }
     comment.dislikes = comment.dislikes.filter(item => {
@@ -142,7 +143,7 @@ class DislikeController {
       });
     }
     res.status(StatusCodes.OK).json({
-      message: "Successfully deleted dislike from comment with id " + commentId,
+      message: 'Successfully deleted dislike from comment with id ' + commentId,
     });
   };
 

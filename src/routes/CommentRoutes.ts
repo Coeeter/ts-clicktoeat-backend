@@ -1,6 +1,7 @@
-import { Router } from "express";
-import { CommentController } from "../controllers";
-import { AuthValidator, CommentValidator } from "../middleware";
+import { Router } from 'express';
+
+import { CommentController } from '../controllers';
+import { AuthValidator, CommentValidator } from '../middleware';
 
 const router = Router();
 const commentController = new CommentController();
@@ -14,7 +15,7 @@ const authValidator = new AuthValidator();
  *    - u: "/api/comments?u=$USER_ID" -> Get all comments of a specific user
  *    - r: "/api/comments?r=$RESTAURANT_ID" -> Get all comments of a restaurant
  */
-router.get("/", commentController.getComments);
+router.get('/', commentController.getComments);
 
 /**
  * Create Comment (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
@@ -24,7 +25,7 @@ router.get("/", commentController.getComments);
  * returns insertId of comment in DB
  */
 router.post(
-  "/",
+  '/',
   authValidator.checkIfTokenExistsAndIsValid,
   commentValidator.getValidators(),
   commentController.createComment
@@ -38,7 +39,7 @@ router.post(
  * returns updated comment if successful
  */
 router.put(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   commentController.updateComment
 );
@@ -49,7 +50,7 @@ router.put(
  * Provide comment id in url
  */
 router.delete(
-  "/:id",
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   commentController.deleteComment
 );

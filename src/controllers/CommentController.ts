@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
-import { Repository } from "typeorm";
-import { v4 } from "uuid";
-import database from "../config/DatabaseConfig";
-import { Comment, Restaurant, User } from "../models";
+import { Request, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
+
+import database from '../config/DatabaseConfig';
+import { Comment, Restaurant } from '../models';
 
 class CommentController {
   private commentRepository: Repository<Comment>;
@@ -23,7 +24,7 @@ class CommentController {
     const { u, r } = req.query;
     if (u && r)
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Invalid queries provided",
+        error: 'Invalid queries provided',
       });
     try {
       if (u) {
@@ -71,7 +72,7 @@ class CommentController {
         await this.commentRepository.findOneByOrFail({ id: parentComment });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Cannot find comment with id " + parentComment,
+        error: 'Cannot find comment with id ' + parentComment,
       });
     }
     try {
@@ -100,7 +101,7 @@ class CommentController {
       comment = await this.commentRepository.findOneByOrFail({ id });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Cannot find comment with id " + id,
+        error: 'Cannot find comment with id ' + id,
       });
     }
     if (comment.user.id != req.user!.id)
@@ -110,7 +111,7 @@ class CommentController {
     const { review, rating } = req.body;
     if (!review && !rating)
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Need at least one field to update!",
+        error: 'Need at least one field to update!',
       });
     if (review) comment.review = review;
     if (rating) comment.rating = rating;
@@ -133,7 +134,7 @@ class CommentController {
       });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: "Cannot find comment with id " + id,
+        error: 'Cannot find comment with id ' + id,
       });
     }
     if (comment.user.id != req.user!.id)
@@ -148,7 +149,7 @@ class CommentController {
       });
     }
     res.status(StatusCodes.OK).json({
-      message: "Deleted comment with id " + id,
+      message: 'Deleted comment with id ' + id,
     });
   };
 
