@@ -3,17 +3,21 @@ import { Repository } from "typeorm";
 import { StatusCodes } from "http-status-codes";
 import { UploadedFile } from "express-fileupload";
 import { v4 } from "uuid";
-import { unlink } from "fs/promises";
 import { Restaurant } from "../models";
 import database from "../config/DatabaseConfig";
+import { deleteImageFromS3, uploadImageToS3 } from "../config/S3Config";
+import Image from "../models/Image";
 
 class RestaurantController {
   private repository: Repository<Restaurant>;
+  private imageRepository: Repository<Image>;
 
   constructor(
-    repository: Repository<Restaurant> = database.getRepository(Restaurant)
+    repository = database.getRepository(Restaurant),
+    imageRepository = database.getRepository(Image)
   ) {
     this.repository = repository;
+    this.imageRepository = imageRepository;
   }
 
   public getAllRestaurants = async (req: Request, res: Response) => {
@@ -25,6 +29,7 @@ class RestaurantController {
       });
       res.status(StatusCodes.OK).json(result);
     } catch (e) {
+      console.log(e);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
       });
@@ -54,13 +59,22 @@ class RestaurantController {
     let id = v4();
     const imageUrl = v4();
     try {
+      const key = `restaurants/${v4()}.jpg`;
+      const { uploadedUrl, error } = await uploadImageToS3(key, image.data);
+      if (error || !uploadedUrl)
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          error: error ?? "Unable to upload image",
+        });
+      const restaurantImage = new Image();
+      restaurantImage.key = key;
+      restaurantImage.url = uploadedUrl;
+      await this.imageRepository.insert(restaurantImage);
       await this.repository.insert({
         id,
         name,
         description,
-        imageUrl: `/uploads/restaurants/${imageUrl}.jpg`,
+        image: restaurantImage,
       });
-      await image.mv(`uploads/restaurants/${imageUrl}.jpg`);
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
@@ -86,10 +100,23 @@ class RestaurantController {
     restaurant.name = name || restaurant.name;
     restaurant.description = description || restaurant.description;
     if (brandImage) {
-      const imageUrl = v4();
-      await unlink(restaurant.imageUrl.slice(1));
-      await brandImage?.mv(`uploads/restaurants/${imageUrl}.jpg`);
-      restaurant.imageUrl = `/uploads/restaurants/${imageUrl}.jpg`;
+      const deletionResult = await deleteImageFromS3(restaurant.image.key);
+      if (deletionResult && deletionResult.error)
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          error: deletionResult.error,
+        });
+      const key = `restaurants/${v4()}.jpg`;
+      const { uploadedUrl, error } = await uploadImageToS3(
+        key,
+        brandImage.data
+      );
+      if (error || !uploadedUrl)
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          error: error ?? "Unable to upload image",
+        });
+      restaurant.image.key = key;
+      restaurant.image.url = uploadedUrl;
+      await this.imageRepository.save(restaurant.image);
     }
     try {
       await this.repository.save(restaurant);
@@ -112,7 +139,12 @@ class RestaurantController {
       });
     }
     try {
-      await unlink(restaurant.imageUrl.slice(1));
+      const deletionResult = await deleteImageFromS3(restaurant.image.key);
+      if (deletionResult && deletionResult.error)
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+          error: deletionResult.error,
+        });
+      await this.imageRepository.delete(restaurant.image);
       await this.repository.delete({
         id: restaurant.id,
         name: restaurant.name,

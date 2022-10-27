@@ -1,6 +1,15 @@
-import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  OneToMany,
+  ManyToMany,
+  OneToOne,
+  JoinColumn,
+} from "typeorm";
 import Branch from "./Branch";
 import Comment from "./Comment";
+import Image from "./Image";
 import User from "./User";
 
 @Entity()
@@ -12,10 +21,14 @@ class Restaurant {
   name!: string;
 
   @Column()
-  imageUrl!: string;
-
-  @Column()
   description!: string;
+
+  @OneToOne(() => Image, {
+    onUpdate: "CASCADE",
+    eager: true,
+  })
+  @JoinColumn()
+  image!: Image;
 
   @OneToMany(() => Branch, branch => branch.restaurant)
   branches!: Branch[];

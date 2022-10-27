@@ -3,14 +3,17 @@ import { sign } from "jsonwebtoken";
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryColumn,
 } from "typeorm";
 import config from "../config/EnvConfig";
 import Comment from "./Comment";
 import Restaurant from "./Restaurant";
+import Image from "./Image";
 
 @Entity()
 class User {
@@ -26,8 +29,12 @@ class User {
   @Column()
   password!: string;
 
-  @Column({ default: null })
-  image!: string;
+  @OneToOne(() => Image, {
+    onUpdate: "CASCADE",
+    eager: true,
+  })
+  @JoinColumn()
+  image!: Image;
 
   @OneToMany(() => Comment, comment => comment.user)
   comments!: Comment[];

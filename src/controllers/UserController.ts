@@ -2,22 +2,28 @@ import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { Repository } from "typeorm";
 import { v4 } from "uuid";
-import { unlink } from "fs/promises";
 import database from "../config/DatabaseConfig";
-import { User } from "../models";
+import { Image, User } from "../models";
+import { deleteImageFromS3, uploadImageToS3 } from "../config/S3Config";
 
 class UserController {
   private userRepository: Repository<User>;
+  private imageRepository: Repository<Image>;
 
-  constructor(userRepository = database.getRepository(User)) {
+  constructor(
+    userRepository = database.getRepository(User),
+    imageRepository = database.getRepository(Image)
+  ) {
     this.userRepository = userRepository;
+    this.imageRepository = imageRepository;
   }
 
   public getAllUsers = async (req: Request, res: Response) => {
     try {
       const users = await this.userRepository
         .createQueryBuilder("user")
-        .select(["user.id", "user.username", "user.email", "user.image"])
+        .select(["user.id", "user.username", "user.email"])
+        .leftJoinAndSelect("user.image", "image")
         .getMany();
       res.status(StatusCodes.OK).json(users);
     } catch (e) {
@@ -36,7 +42,8 @@ class UserController {
     try {
       const user = await this.userRepository
         .createQueryBuilder("user")
-        .select(["user.id", "user.username", "user.email", "user.image"])
+        .select(["user.id", "user.username", "user.email"])
+        .leftJoinAndSelect("user.image", "image")
         .where("user.id = :id", { id })
         .getOne();
       if (!user) return next();
@@ -58,9 +65,17 @@ class UserController {
     await user.setPassword(password);
     try {
       if (image) {
-        const name = v4();
-        user.image = `/uploads/users/${name}.jpg`;
-        await image.mv(`uploads/users/${name}.jpg`);
+        const key = `users/${v4()}.jpg`;
+        const { uploadedUrl, error } = await uploadImageToS3(key, image.data);
+        if (error || !uploadedUrl)
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            error: error ?? "Unable to upload image",
+          });
+        const userImage = new Image();
+        userImage.key = key;
+        userImage.url = uploadedUrl;
+        await this.imageRepository.insert(userImage);
+        user.image = userImage;
       }
       await this.userRepository.insert(user);
     } catch (e) {
@@ -87,12 +102,22 @@ class UserController {
     if (password) user.setPassword(password);
     try {
       if (image) {
-        if (user.image && user.image.length) {
-          await unlink(user.image.slice(1));
+        if (user.image) {
+          const deletionResult = await deleteImageFromS3(user.image.key);
+          if (deletionResult && deletionResult.error)
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+              error: deletionResult.error,
+            });
         }
-        const name = v4();
-        user.image = `/uploads/users/${name}.jpg`;
-        await image.mv(`uploads/users/${name}.jpg`);
+        const key = `users/${v4()}.jpg`;
+        const { uploadedUrl, error } = await uploadImageToS3(key, image.data);
+        if (error || !uploadedUrl)
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            error: error ?? "Unable to upload image",
+          });
+        user.image.key = key;
+        user.image.url = uploadedUrl;
+        await this.imageRepository.save(user.image);
       }
       await this.userRepository.save(user);
     } catch (e) {
@@ -136,7 +161,14 @@ class UserController {
       });
     }
     try {
-      if (user.image) await unlink(user.image.slice(1));
+      if (user.image) {
+        const deletionResult = await deleteImageFromS3(user.image.key);
+        if (deletionResult && deletionResult.error)
+          return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            error: deletionResult.error,
+          });
+        await this.imageRepository.delete(user.image);
+      }
       await this.userRepository.delete({
         id: user.id,
         username: user.username,
