@@ -1,5 +1,5 @@
 import { compare, hash } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import {
   Column,
   Entity,
@@ -80,6 +80,27 @@ class User {
         expiresIn: '60d',
       }
     );
+  };
+
+  public generatePasswordResetUrl = () => {
+    const tokenizedEmail = sign({ email: this.email }, config.server.secret);
+    const tokenizedUserCredentials = sign(
+      { username: this.username },
+      this.password,
+      { expiresIn: '15min' }
+    );
+    return `/reset-password?e=${tokenizedEmail}&c=${tokenizedUserCredentials}`;
+  };
+
+  public isPasswordResetCredentialsValid = (userCredentials: string) => {
+    try {
+      const { username } = verify(userCredentials, this.password) as {
+        username: string;
+      };
+      return username === this.username;
+    } catch (e) {
+      return false;
+    }
   };
 }
 

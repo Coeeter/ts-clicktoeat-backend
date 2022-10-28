@@ -54,6 +54,27 @@ router.post(
 );
 
 /**
+ * Send password reset link to email
+ * Requires email field in body
+ */
+router.post(
+  '/forget-password',
+  userValidator.getValidators('forgot-password'),
+  userController.sendPasswordResetLinkToEmail
+);
+
+/**
+ * Check password reset link is valid
+ * requires tokenized email and credential from url in email and credential field in body
+ * returns token of user if successful to use to update password
+ */
+router.post(
+  '/validate-credential',
+  userValidator.getValidators('validate-credential'),
+  userController.validatePasswordResetLink
+);
+
+/**
  * Update Account (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
  * Require at least one field (email, password, username, image)
  * Optional field deleteImage -> if deleteImage == true & image == null, image will be deleted

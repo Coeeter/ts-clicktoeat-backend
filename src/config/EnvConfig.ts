@@ -13,6 +13,9 @@ dotenv.config();
   'AWS_S3_ACCESS_KEY_ID',
   'AWS_S3_SECRET_ACCESS_KEY',
   'AWS_S3_BUCKET_NAME',
+  'EMAIL',
+  'EMAIL_PASSWORD',
+  'HOST',
 ].forEach(name => {
   if (process.env[name]) return;
   throw new Error(`Environment variable ${name} is missing`);
@@ -29,6 +32,9 @@ const config = {
   server: {
     port: parseInt(process.env.PORT!),
     secret: process.env.SECRET_KEY!,
+    email: process.env.EMAIL!,
+    emailPassword: process.env.EMAIL_PASSWORD!,
+    host: process.env.HOST!,
   },
   aws: {
     accessKey: process.env.AWS_S3_ACCESS_KEY_ID!,

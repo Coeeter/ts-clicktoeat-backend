@@ -1,0 +1,13 @@
+<svg id="Component_3_1" data-name="Component 3 – 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <linearGradient id="linear-gradient" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#ffb075" />
+      <stop offset="1" stop-color="#f06f13" />
+    </linearGradient>
+  </defs>
+  <rect id="Rectangle_2" data-name="Rectangle 2" width="300" height="300" rx="150" fill="url(#linear-gradient)" />
+  <g id="Component_1_2" data-name="Component 1 – 2" transform="translate(75.228 72.975)">
+    <path id="Icon_map-food" data-name="Icon map-food" d="M149.935,37.815l-12.26,96.1H96.267L84.057,37.335h50.552L144.6,2.825l5.664,1.707-9.586,33.211,9.256.072ZM78.2,93.414s1.548-12.462-19.924-12.462h-34.2C2.642,80.952,4.16,93.414,4.16,93.414H78.2ZM4.16,121.454s-1.517,12.462,19.924,12.462h34.2c21.472,0,19.924-12.462,19.924-12.462H4.16Zm70.831-6.231c3.514,0,6.353-3.471,6.353-7.786,0-4.34-2.838-7.792-6.353-7.792H7.076c-3.5,0-6.356,3.452-6.356,7.792,0,4.315,2.857,7.786,6.356,7.786Z" transform="translate(-0.72 20.134)" fill="#fff" />
+    <path id="Icon_metro-spoon-fork" data-name="Icon metro-spoon-fork" d="M20.129,1.928c-9.165,0-16.595,8.668-16.595,19.36,0,9.155,5.447,16.825,12.766,18.842L13.554,84.911a5.152,5.152,0,0,0,5.193,5.521h2.766a5.152,5.152,0,0,0,5.193-5.521L23.958,40.13c7.319-2.017,12.766-9.687,12.766-18.842,0-10.692-7.43-19.36-16.595-19.36Zm55.776,0L71.3,29.586H67.839l-2.3-27.658h-2.3l-2.3,27.658H57.467L52.857,1.928h-2.3V37.883a2.766,2.766,0,0,0,2.766,2.766h7.2L57.806,84.911A5.152,5.152,0,0,0,63,90.432h2.766a5.152,5.152,0,0,0,5.193-5.521L68.242,40.649h7.2a2.766,2.766,0,0,0,2.766-2.766V1.928Z" transform="translate(-3.438 -1.928)" fill="#fff" />
+  </g>
+</svg>

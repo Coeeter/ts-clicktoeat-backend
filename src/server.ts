@@ -1,3 +1,4 @@
+import cors from 'cors';
 import express, { Express } from 'express';
 import fileUpload from 'express-fileupload';
 
@@ -17,6 +18,7 @@ import routes from './routes';
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use(fileUpload());
+  app.use(cors());
 
   app.use('/', routes);
 

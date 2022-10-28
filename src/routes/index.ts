@@ -1,4 +1,5 @@
 import express, { Router } from 'express';
+import path from 'path';
 
 import branchRoutes from './BranchRoutes';
 import commentRoutes from './CommentRoutes';
@@ -10,7 +11,7 @@ import userRoutes from './UserRoutes';
 
 const router = Router();
 
-router.use('/uploads', express.static('uploads'));
+router.use(express.static(path.join(__dirname, '..', '..', 'public', 'dist')));
 
 router.use('/api/restaurants', restaurantRoutes);
 router.use('/api/branches', branchRoutes);
@@ -21,7 +22,9 @@ router.use('/api/likes', likeRoutes);
 router.use('/api/dislikes', dislikeRoutes);
 
 router.use((req, res) => {
-  res.status(404).send('Not Found');
+  res.sendFile(
+    path.join(__dirname, '..', '..', 'public', 'dist', 'index.html')
+  );
 });
 
 export default router;

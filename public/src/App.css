@@ -1,0 +1,15 @@
+.logo {
+  animation: bounce 2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+  0% {
+    transform: translateY(5%);
+  }
+  50% {
+    transform: translateY(-5%);
+  }
+  100% {
+    transform: translateY(5%);
+  }
+}

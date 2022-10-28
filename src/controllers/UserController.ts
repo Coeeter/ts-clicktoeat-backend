@@ -1,9 +1,12 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response, urlencoded } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { verify } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import database from '../config/DatabaseConfig';
+import config from '../config/EnvConfig';
+import { sendPasswordResetEmail } from '../config/MailConfig';
 import { deleteImageFromS3, uploadImageToS3 } from '../config/S3Config';
 import { Image, User } from '../models';
 
@@ -101,7 +104,7 @@ class UserController {
     const user = req.user!;
     if (username) user.username = username;
     if (email) user.email = username;
-    if (password) user.setPassword(password);
+    if (password) await user.setPassword(password);
     try {
       if (deleteImage || (image && user.image)) {
         const result = this.deleteImage(req, res, user.image.key);
@@ -214,6 +217,62 @@ class UserController {
       return;
     }
     return { key, uploadedUrl };
+  };
+
+  public sendPasswordResetLinkToEmail = async (req: Request, res: Response) => {
+    const { email } = req.body;
+    let user;
+    try {
+      user = await this.userRepository.findOneByOrFail({ email });
+    } catch (e) {
+      return res.status(StatusCodes.OK).json({
+        message: 'Sent password reset link to email if it has an account',
+      });
+    }
+    const urlEndPoint = user.generatePasswordResetUrl();
+    const { accepted, error } = await sendPasswordResetEmail(
+      email,
+      urlEndPoint
+    );
+    if (error || !accepted || !accepted.length)
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: error ?? 'Unknown error has occurred',
+      });
+    res.status(StatusCodes.OK).json({
+      message: 'Sent password reset link to email if it has an account',
+    });
+  };
+
+  public validatePasswordResetLink = async (req: Request, res: Response) => {
+    const { email, credential } = req.body;
+    let decodedEmail;
+    try {
+      decodedEmail = verify(email, config.server.secret) as {
+        email: string;
+      };
+    } catch (e) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        error: 'Invalid link given',
+      });
+    }
+    let user;
+    try {
+      user = await this.userRepository.findOneByOrFail({
+        email: decodedEmail.email,
+      });
+    } catch (e) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        error: 'Invalid link given',
+      });
+    }
+    const isValid = user.isPasswordResetCredentialsValid(credential);
+    if (!isValid)
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        error: 'Invalid link given',
+      });
+    res.status(StatusCodes.OK).json({
+      token: user.generateToken(),
+    });
   };
 }
 

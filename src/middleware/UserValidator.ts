@@ -55,6 +55,14 @@ class UserValidator {
     return Promise.resolve();
   });
 
+  private _checkCredential = body('credential')
+    .exists()
+    .withMessage('Field credential is missing');
+
+  private _checkEmailToken = body('email')
+    .exists()
+    .withMessage('Field email is missing');
+
   private _handleErrors = (req: Request, res: Response, next: NextFunction) => {
     const errors: { error: string; field: string }[] = [];
     validationResult(req)
@@ -76,7 +84,14 @@ class UserValidator {
     next();
   };
 
-  public getValidators(route: 'create' | 'login' | 'delete') {
+  public getValidators(
+    route:
+      | 'create'
+      | 'login'
+      | 'delete'
+      | 'forgot-password'
+      | 'validate-credential'
+  ) {
     switch (route) {
       case 'login':
         return [this._checkEmail, this._checkPassword, this._handleErrors];
@@ -87,6 +102,14 @@ class UserValidator {
           this._checkIfEmailAlreadyExistsInDB,
           this._checkIfUsernameAlreadyExistsInDB,
           this._checkPasswordWithLength,
+          this._handleErrors,
+        ];
+      case 'forgot-password':
+        return [this._checkEmail, this._handleErrors];
+      case 'validate-credential':
+        return [
+          this._checkEmailToken,
+          this._checkCredential,
           this._handleErrors,
         ];
     }

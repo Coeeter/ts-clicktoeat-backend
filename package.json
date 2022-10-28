@@ -14,12 +14,14 @@
   "devDependencies": {
     "@types/aws-sdk": "^2.7.0",
     "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.12",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.13",
     "@types/express-fileupload": "^1.4.1",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/mysql": "^2.15.21",
     "@types/node": "^18.7.13",
+    "@types/nodemailer": "^6.4.6",
     "@types/uuid": "^8.3.4",
     "concurrently": "^7.3.0",
     "nodemon": "^2.0.19",
@@ -28,6 +30,7 @@
   "dependencies": {
     "aws-sdk": "^2.1241.0",
     "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-fileupload": "^1.4.0",
@@ -35,6 +38,7 @@
     "http-status-codes": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.8.0",
     "typeorm": "^0.3.9",
     "uuid": "^8.3.2"
   }
