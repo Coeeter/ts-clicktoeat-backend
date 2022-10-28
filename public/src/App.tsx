@@ -6,6 +6,7 @@ import { CssBaseline, ThemeProvider } from '@mui/material';
 
 import Home from './screens/Home';
 import ResetPassword from './screens/ResetPassword/ResetPassword';
+import NotFound from './screens/NotFound';
 import theme from './Theme';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
