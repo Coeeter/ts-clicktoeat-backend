@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { body, query, validationResult } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 
 class CommentValidator {

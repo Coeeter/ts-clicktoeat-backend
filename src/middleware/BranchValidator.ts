@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-import { body, query, validationResult } from 'express-validator';
+import { body, validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 
 class BranchValidator {
-  private _checkQueryForR = query('r')
+  private _checkBodyForRestaurantId = body('restaurantId')
     .exists()
-    .withMessage('Query r is missing');
+    .withMessage('Field restaurantId is missing');
 
   private _checkAddress = body('address')
     .exists()
@@ -47,7 +47,6 @@ class BranchValidator {
   public getValidators(route: 'save' | 'delete') {
     if (route == 'save') {
       return [
-        this._checkQueryForR,
         this._checkAddress,
         this._checkLatitude,
         this._checkLongitude,
@@ -55,7 +54,7 @@ class BranchValidator {
       ];
     }
     if (route == 'delete') {
-      return [this._checkQueryForR, this._handleErrors];
+      return [this._checkBodyForRestaurantId, this._handleErrors];
     }
     throw new Error('Invalid route passed');
   }
