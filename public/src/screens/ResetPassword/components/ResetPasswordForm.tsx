@@ -34,7 +34,7 @@ export default function ResetPasswordForm({
 
   const onSubmit: SubmitHandler<FormValues> = async data => {
     setIsLoading(true);
-    const response = await fetch('http://localhost:8080/api/users', {
+    const response = await fetch('https://clicktoeat.nasportfolio.com/api/users', {
       method: 'PUT',
       body: JSON.stringify({ password: data.password }),
       headers: {
