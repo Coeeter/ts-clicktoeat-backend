@@ -17,12 +17,12 @@ router.get('/', branchController.getAllBranches);
 
 /**
  * Create Branch (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
- * Requires restaurant id in query r -> "/api/branches?r=$RESTAURANT_ID"
- * Requires fields address, latitude and longitude
+ * Provide restaurant id in url
+ * Requires fields address, latitude and longitude in body
  * returns insertId of branch saved in db
  */
 router.post(
-  '/',
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   branchValidator.getValidators('save'),
   branchController.saveBranch
@@ -31,7 +31,7 @@ router.post(
 /**
  * Delete Branch (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
  * Provide Branch id to url
- * Requires restaurant id in query r -> "api/branches/$BRANCH_ID?r=$RESTAURANT_ID"
+ * requires field restaurantId in body
  */
 router.delete(
   '/:id',

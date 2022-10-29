@@ -3,10 +3,6 @@ import { body, query, validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 
 class CommentValidator {
-  private _checkRestaurant = query('r')
-    .exists()
-    .withMessage('Query r is missing');
-
   private _checkReview = body('review')
     .exists()
     .withMessage('Field review is missing');
@@ -40,7 +36,6 @@ class CommentValidator {
 
   public getValidators = () => {
     return [
-      this._checkRestaurant,
       this._checkRating,
       this._checkReview,
       this._handleErrors,

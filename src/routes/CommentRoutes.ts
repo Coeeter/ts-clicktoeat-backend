@@ -11,21 +11,21 @@ const authValidator = new AuthValidator();
 /**
  * Get Comments
  * Three options:
- *    - normal: "/api/comments" -> Gets all comments in DB
- *    - u: "/api/comments?u=$USER_ID" -> Get all comments of a specific user
- *    - r: "/api/comments?r=$RESTAURANT_ID" -> Get all comments of a restaurant
+ *    - normal without body -> Gets all comments in DB
+ *    - user id in user field in body -> Get all comments of a specific user
+ *    - restaurant id in restaurant field in body -> Get all comments of a restaurant
  */
 router.get('/', commentController.getComments);
 
 /**
  * Create Comment (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
- * Requires restaurant id in query r -> "/api/comments?r=$RESTAURANT_ID"
+ * Provide restaurant id in url
  * Requires review, rating fields in body
  * optional field is parentComment -> to reply to a comment
  * returns insertId of comment in DB
  */
 router.post(
-  '/',
+  '/:id',
   authValidator.checkIfTokenExistsAndIsValid,
   commentValidator.getValidators(),
   commentController.createComment

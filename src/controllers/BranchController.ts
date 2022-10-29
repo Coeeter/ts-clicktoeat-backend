@@ -30,7 +30,7 @@ class BranchController {
   };
 
   public saveBranch = async (req: Request, res: Response) => {
-    const restaurantId = req.query.r!.toString();
+    const restaurantId = req.params.id!.toString();
     let restaurant: Restaurant;
     try {
       restaurant = await this.restaurantRepository.findOneByOrFail({
@@ -60,7 +60,7 @@ class BranchController {
   };
 
   public deleteBranch = async (req: Request, res: Response) => {
-    const restaurantId = req.query.r!.toString();
+    const { restaurantId } = req.body;
     let restaurant: Restaurant;
     try {
       restaurant = await this.restaurantRepository.findOneByOrFail({

@@ -21,23 +21,23 @@ class CommentController {
   }
 
   public getComments = async (req: Request, res: Response) => {
-    const { u, r } = req.query;
-    if (u && r)
+    const { user, restaurant } = req.body;
+    if (user && restaurant)
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: 'Invalid queries provided',
+        error: 'Invalid body provided. Only one field is accepted or none at all.',
       });
     try {
-      if (u) {
+      if (user) {
         const result = await this.commentRepository.findBy({
-          user: { id: u.toString() },
+          user: { id: user.toString() },
         });
         return res
           .status(StatusCodes.OK)
           .json(result.map(this.transformComment));
       }
-      if (r) {
+      if (restaurant) {
         const result = await this.commentRepository.findBy({
-          restaurant: { id: r.toString() },
+          restaurant: { id: restaurant.toString() },
         });
         return res
           .status(StatusCodes.OK)
@@ -53,7 +53,7 @@ class CommentController {
   };
 
   public createComment = async (req: Request, res: Response) => {
-    const restaurantId = req.query.r!.toString();
+    const restaurantId = req.params.id!.toString();
     const user = req.user!;
     let restaurant;
     try {

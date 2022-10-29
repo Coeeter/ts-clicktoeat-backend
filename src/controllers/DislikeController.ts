@@ -18,15 +18,15 @@ class DislikeController {
   }
 
   public getDislikes = async (req: Request, res: Response) => {
-    const { u, c } = req.query;
-    if (u && c)
+    const { user, comment } = req.body;
+    if (user && comment)
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: 'Invalid queries provided',
+        error: 'Invalid body provided. Only one field is accepted or none at all.',
       });
     try {
-      if (u) {
+      if (user) {
         const result = await this.userRepository.findOneOrFail({
-          where: { id: u.toString() },
+          where: { id: user.toString() },
           relations: { dislikedComments: true },
         });
         return res
@@ -39,9 +39,9 @@ class DislikeController {
       });
     }
     try {
-      if (c) {
+      if (comment) {
         const result = await this.commentRepository.findOneOrFail({
-          where: { id: c.toString() },
+          where: { id: comment.toString() },
           relations: { dislikes: true },
         });
         return res
