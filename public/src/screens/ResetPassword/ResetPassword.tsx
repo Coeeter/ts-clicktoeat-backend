@@ -21,7 +21,7 @@ export default function ResetPassword() {
   const validateCredential = async () => {
     try {
       const response = await fetch(
-        'http://localhost:8080/api/users/validate-credential',
+        'https://clicktoeat.nasportfolio.com/api/users/validate-credential',
         {
           method: 'POST',
           headers: {
@@ -45,7 +45,7 @@ export default function ResetPassword() {
     if (!token) return;
     try {
       const response = await fetch(
-        'http://localhost:8080/api/users/validate-token',
+        'https://clicktoeat.nasportfolio.com/api/users/validate-token',
         {
           method: 'GET',
           headers: {
