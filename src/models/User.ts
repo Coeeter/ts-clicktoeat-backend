@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 
 import config from '../config/EnvConfig';
+import { sendPushNotification } from '../config/NotificationConfig';
 import Comment from './Comment';
 import Image from './Image';
 import Restaurant from './Restaurant';
@@ -29,6 +30,9 @@ class User {
 
   @Column()
   password!: string;
+
+  @Column({ default: null })
+  fcmToken!: string;
 
   @OneToOne(() => Image, {
     onUpdate: 'CASCADE',
@@ -101,6 +105,13 @@ class User {
     } catch (e) {
       return false;
     }
+  };
+
+  public sendPushNotificationToDevice = async (title: string, body: string) => {
+    if (!this.fcmToken) return;
+    await sendPushNotification(this.fcmToken, {
+      notification: { title, body },
+    });
   };
 }
 

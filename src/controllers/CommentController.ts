@@ -67,9 +67,13 @@ class CommentController {
     }
     const id = v4();
     const { review, rating, parentComment } = req.body;
+    let parent: Comment | undefined;
     try {
-      if (parentComment)
-        await this.commentRepository.findOneByOrFail({ id: parentComment });
+      if (parentComment) {
+        parent = await this.commentRepository.findOneByOrFail({
+          id: parentComment,
+        });
+      }
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: 'Cannot find comment with id ' + parentComment,
@@ -85,6 +89,19 @@ class CommentController {
         parentComment,
       });
     } catch (e) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: e,
+      });
+    }
+    try {
+      if (parent && user.username !== parent.user.username) {
+        await parent.user.sendPushNotificationToDevice(
+          user.username,
+          'Replied to your comment'
+        );
+      }
+    } catch (e) {
+      this.commentRepository.delete({ id });
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
       });

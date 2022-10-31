@@ -2,3 +2,4 @@
 /.env
 /node_modules
 /clicktoeat-api.pem
+/private-key.json
