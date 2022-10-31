@@ -1,6 +1,6 @@
-const admin = require('firebase-admin');
+const admin = require('firebase-admin')
 
-var serviceAccount = require('../../private-key.json');
+const serviceAccount = require('../../private-key.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -15,9 +15,11 @@ export interface Message {
 
 export const sendPushNotification = async (
   registrationToken: string,
-  message: Message
+  { notification }: Message
 ) => {
-  await admin.messaging().sendToDevice(registrationToken, message, {
-    priority: 'high',
+  await admin.messaging().send({
+    token: registrationToken,
+    notification: notification,
+    data: notification,
   });
 };

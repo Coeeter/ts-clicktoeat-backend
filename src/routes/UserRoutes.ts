@@ -45,6 +45,7 @@ router.post(
  * Create account
  * Required email, password, username in body
  * Optional to send profile photo with name of image
+ * Optional to send fcm registration token of user device
  * returns token if successful
  */
 router.post(
@@ -76,7 +77,7 @@ router.post(
 
 /**
  * Update Account (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
- * Require at least one field (email, password, username, image)
+ * Require at least one field (email, password, username, image, fcmToken)
  * Optional field deleteImage -> if deleteImage == true & image == null, image will be deleted
  * returns token if successful
  */

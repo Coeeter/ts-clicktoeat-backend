@@ -60,12 +60,13 @@ class UserController {
   };
 
   public createUser = async (req: Request, res: Response) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, fcmToken } = req.body;
     const image = [req.files?.image].flat()[0];
     const user = new User();
     user.id = v4();
     user.username = username;
     user.email = email;
+    if (fcmToken) user.fcmToken = fcmToken;
     await user.setPassword(password);
     try {
       if (image) {
@@ -90,13 +91,20 @@ class UserController {
   };
 
   public updateUser = async (req: Request, res: Response) => {
-    const { username, email, password, deleteImage } = req.body;
+    const { username, email, password, deleteImage, fcmToken } = req.body;
     const image = [req.files?.image].flat()[0];
     if (image && deleteImage)
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: 'Invalid body given. Cannot delete image, when given new image',
       });
-    if (!username && !email && !password && !image && !deleteImage) {
+    if (
+      !username &&
+      !email &&
+      !password &&
+      !image &&
+      !deleteImage &&
+      !fcmToken
+    ) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: 'Need at least one field to update!',
       });
@@ -105,6 +113,7 @@ class UserController {
     if (username) user.username = username;
     if (email) user.email = username;
     if (password) await user.setPassword(password);
+    if (fcmToken) user.fcmToken = fcmToken;
     try {
       if (deleteImage || (image && user.image)) {
         const result = this.deleteImage(req, res, user.image.key);
