@@ -14,12 +14,39 @@ This repository contains the source code for the updated and better version of m
 
 ## Usage
 To run this server on your local machine you can clone this repository and make sure to create and env file using the values in the .env.example file in root. Also make sure to have mysql installed on your machine. Then you can run the server on your local port 8080 by running these commands
-```bash
+
+### For first time running server:
+```
 npm install
+```
+To install all packages required for the server to run.
+
+```
 npm run build
+```
+To compile all the typescript files to javascript files.
+
+```
 npm run start
 ```
-I have deployed this api using ec2 and load balancers so you can also use the api by this link https://clicktoeat.nasportfolio.com.
+To start the server.
+
+```
+cd public
+```
+Move to public folder so we can run commands there.
+
+```
+npm run build
+```
+Build the react project.
+
+### For other times:
+```
+npm run start
+```
+With this the api is ready to be consumed.<br/>
+I have also deployed this api using ec2 and load balancers so you can also use the api by this link https://clicktoeat.nasportfolio.com.
 
 ## Built using
 - nodejs (for the api)
