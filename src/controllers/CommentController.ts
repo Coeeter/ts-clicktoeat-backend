@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import database from '../config/DatabaseConfig';
+import { NotificationType } from '../config/NotificationConfig';
 import { Comment, Restaurant } from '../models';
 
 class CommentController {
@@ -24,7 +25,8 @@ class CommentController {
     const { user, restaurant } = req.body;
     if (user && restaurant)
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: 'Invalid body provided. Only one field is accepted or none at all.',
+        error:
+          'Invalid body provided. Only one field is accepted or none at all.',
       });
     try {
       if (user) {
@@ -80,6 +82,14 @@ class CommentController {
       });
     }
     try {
+      if (parent && user.username !== parent.user.username) {
+        await parent.user.sendPushNotificationToDevice(
+          NotificationType.COMMENT,
+          user.username,
+          parent.id,
+          id
+        );
+      }
       await this.commentRepository.save({
         id,
         user,
@@ -89,19 +99,6 @@ class CommentController {
         parentComment,
       });
     } catch (e) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-        error: e,
-      });
-    }
-    try {
-      if (parent && user.username !== parent.user.username) {
-        await parent.user.sendPushNotificationToDevice(
-          user.username,
-          'Replied to your comment'
-        );
-      }
-    } catch (e) {
-      this.commentRepository.delete({ id });
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
       });

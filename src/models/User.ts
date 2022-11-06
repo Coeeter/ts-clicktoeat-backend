@@ -12,7 +12,10 @@ import {
 } from 'typeorm';
 
 import config from '../config/EnvConfig';
-import { sendPushNotification } from '../config/NotificationConfig';
+import {
+  NotificationType,
+  sendPushNotification,
+} from '../config/NotificationConfig';
 import Comment from './Comment';
 import Image from './Image';
 import Restaurant from './Restaurant';
@@ -107,11 +110,37 @@ class User {
     }
   };
 
-  public sendPushNotificationToDevice = async (title: string, body: string) => {
+  public sendPushNotificationToDevice = async (
+    type: NotificationType,
+    username: string,
+    commentId: string,
+    createdItemId: string
+  ) => {
     if (!this.fcmToken) return;
-    await sendPushNotification(this.fcmToken, {
-      notification: { title, body },
-    });
+
+    const body = this.getBodyFromType(type);
+    const notification = { title: username, body };
+    const data = {
+      type,
+      commentId,
+      createdItemId,
+    };
+
+    await sendPushNotification(this.fcmToken, notification, data);
+  };
+
+  private getBodyFromType = (type: NotificationType): string => {
+    switch (type) {
+      case NotificationType.COMMENT: {
+        return 'Replied to your comment';
+      }
+      case NotificationType.DISLIKE: {
+        return 'Disliked your comment';
+      }
+      case NotificationType.LIKE: {
+        return 'Liked your comment';
+      }
+    }
   };
 }
 

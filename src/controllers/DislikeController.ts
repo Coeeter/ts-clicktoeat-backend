@@ -3,6 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Repository } from 'typeorm';
 
 import database from '../config/DatabaseConfig';
+import { NotificationType } from '../config/NotificationConfig';
 import { Comment, User } from '../models';
 
 class DislikeController {
@@ -21,7 +22,8 @@ class DislikeController {
     const { user, comment } = req.body;
     if (user && comment)
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: 'Invalid body provided. Only one field is accepted or none at all.',
+        error:
+          'Invalid body provided. Only one field is accepted or none at all.',
       });
     try {
       if (user) {
@@ -105,6 +107,12 @@ class DislikeController {
       });
     }
     try {
+      await comment.user.sendPushNotificationToDevice(
+        NotificationType.DISLIKE,
+        req.user!.username,
+        comment.id,
+        req.user!.id
+      );
       await this.commentRepository.save({
         ...comment,
         dislikes: [...comment.dislikes, req.user!],
