@@ -35,11 +35,7 @@ class CommentValidator {
   };
 
   public getValidators = () => {
-    return [
-      this._checkRating,
-      this._checkReview,
-      this._handleErrors,
-    ];
+    return [this._checkRating, this._checkReview, this._handleErrors];
   };
 }
 

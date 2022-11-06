@@ -1,5 +1,11 @@
 import {
-    Column, Entity, JoinColumn, ManyToMany, OneToMany, OneToOne, PrimaryColumn
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
 } from 'typeorm';
 
 import Branch from './Branch';

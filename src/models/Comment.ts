@@ -1,6 +1,12 @@
 import {
-    Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn,
-    UpdateDateColumn
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 import Restaurant from './Restaurant';
