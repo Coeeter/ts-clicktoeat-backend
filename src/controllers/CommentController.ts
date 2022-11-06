@@ -68,13 +68,21 @@ class CommentController {
       });
     }
     const id = v4();
-    const { review, rating, parentComment } = req.body;
+    let { review, rating, parentComment } = req.body;
     let parent: Comment | undefined;
+    let parentId = parentComment;
     try {
       if (parentComment) {
         parent = await this.commentRepository.findOneByOrFail({
           id: parentComment,
         });
+        if (parent.parentComment) {
+          const result = await this.commentRepository.findOneByOrFail({
+            id: parent.parentComment,
+          });
+          parentId = result.id;
+          review = `@${parent.user.username} ${review}`;
+        }
       }
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
@@ -96,7 +104,7 @@ class CommentController {
         restaurant,
         rating,
         review,
-        parentComment,
+        parentComment: parentId,
       });
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -157,6 +165,7 @@ class CommentController {
       });
     try {
       await this.commentRepository.delete({ id });
+      await this.commentRepository.delete({ parentComment: id });
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
