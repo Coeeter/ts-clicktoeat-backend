@@ -76,12 +76,12 @@ class CommentController {
         parent = await this.commentRepository.findOneByOrFail({
           id: parentComment,
         });
+        review = `@${parent.user.username} ${review}`;
         if (parent.parentComment) {
           const result = await this.commentRepository.findOneByOrFail({
             id: parent.parentComment,
           });
           parentId = result.id;
-          review = `@${parent.user.username} ${review}`;
         }
       }
     } catch (e) {
