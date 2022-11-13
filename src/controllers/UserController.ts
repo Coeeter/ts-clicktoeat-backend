@@ -71,7 +71,7 @@ class UserController {
     try {
       if (image) {
         const result = await this.uploadImage(req, res, image.data);
-        if (!result) return;
+        if (!result) throw new Error('Unable to upload image');
         const { key, uploadedUrl } = result;
         const userImage = new Image();
         userImage.key = key;
@@ -81,7 +81,7 @@ class UserController {
       }
       await this.userRepository.insert(user);
     } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: e,
       });
     }
@@ -111,17 +111,18 @@ class UserController {
     }
     const user = req.user!;
     if (username) user.username = username;
-    if (email) user.email = username;
+    if (email) user.email = email;
     if (password) await user.setPassword(password);
     if (fcmToken) user.fcmToken = fcmToken;
     try {
       if (deleteImage || (image && user.image)) {
         const result = this.deleteImage(req, res, user.image.key);
-        if (!result) return;
+        if (!result) throw new Error('Unable to upload image');
       }
       if (image) {
         const result = await this.uploadImage(req, res, image.data);
-        if (!result || !result.uploadedUrl) return;
+        if (!result || !result.uploadedUrl)
+          throw new Error('Unable to upload image');
         user.image.key = result.key;
         user.image.url = result.uploadedUrl;
         await this.imageRepository.save(user.image);

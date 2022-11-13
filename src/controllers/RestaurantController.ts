@@ -90,6 +90,10 @@ class RestaurantController {
     const id = req.params.id;
     const { name, description } = req.body;
     const brandImage = [req.files?.brandImage].flat()[0];
+    if (!name && !description && !brandImage)
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: 'Need at least one field to update!',
+      });
     let restaurant: Restaurant;
     try {
       restaurant = await this.repository.findOneByOrFail({ id });
