@@ -181,6 +181,7 @@ class CommentController {
       ...comment,
       user: {
         ...comment.user,
+        fcmToken: undefined,
         password: undefined,
       },
     };

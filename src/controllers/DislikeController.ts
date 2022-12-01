@@ -160,6 +160,7 @@ class DislikeController {
       ...comment,
       user: {
         ...comment.user,
+        fcmToken: undefined,
         password: undefined,
       },
     };
@@ -168,6 +169,7 @@ class DislikeController {
   private transformUser = (user: User) => {
     return {
       ...user,
+      fcmToken: undefined,
       password: undefined,
     };
   };
