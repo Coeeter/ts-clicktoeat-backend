@@ -37,11 +37,7 @@ class UserController {
     }
   };
 
-  public getUserById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  public getUserById = async (req: Request, res: Response) => {
     const id = req.params.id;
     try {
       const user = await this.userRepository
@@ -50,7 +46,6 @@ class UserController {
         .leftJoinAndSelect('user.image', 'image')
         .where('user.id = :id', { id })
         .getOne();
-      if (!user) return next();
       res.status(StatusCodes.OK).json(user);
     } catch (e) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
