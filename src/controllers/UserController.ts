@@ -197,7 +197,12 @@ class UserController {
     res: Response
   ) => {
     try {
-      res.redirect(`/api/users/${req.user!.id}`);
+      if (!req.user) throw new Error();
+      res.status(StatusCodes.OK).json({
+        ...req.user,
+        fcmToken: undefined,
+        password: undefined,
+      });
     } catch (e) {
       console.log(e);
       res.status(StatusCodes.BAD_REQUEST).json({

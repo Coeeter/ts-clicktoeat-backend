@@ -118,7 +118,21 @@ class User {
   ) => {
     if (!this.fcmToken) return;
 
-    const body = this.getBodyFromType(type);
+    let body;
+    switch (type) {
+      case NotificationType.COMMENT: {
+        body = 'Replied to your comment';
+        break;
+      }
+      case NotificationType.DISLIKE: {
+        body = 'Disliked your comment';
+        break;
+      }
+      case NotificationType.LIKE: {
+        body = 'Liked your comment';
+        break;
+      }
+    }
     const notification = { title: username, body };
     const data = {
       type,
@@ -127,20 +141,6 @@ class User {
     };
 
     await sendPushNotification(this.fcmToken, notification, data);
-  };
-
-  private getBodyFromType = (type: NotificationType): string => {
-    switch (type) {
-      case NotificationType.COMMENT: {
-        return 'Replied to your comment';
-      }
-      case NotificationType.DISLIKE: {
-        return 'Disliked your comment';
-      }
-      case NotificationType.LIKE: {
-        return 'Liked your comment';
-      }
-    }
   };
 }
 
