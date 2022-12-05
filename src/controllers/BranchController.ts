@@ -37,7 +37,7 @@ class BranchController {
         id: restaurantId,
       });
     } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(StatusCodes.NOT_FOUND).json({
         error: `No restaurant with id ${restaurantId}`,
       });
     }
@@ -67,25 +67,14 @@ class BranchController {
         id: restaurantId,
       });
     } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(StatusCodes.NOT_FOUND).json({
         error: `No restaurant with id ${restaurantId}`,
       });
     }
     const branchId = req.params.id;
-    let branch: Branch;
-    try {
-      branch = await this.branchRepository.findOneByOrFail({
-        id: branchId,
-        restaurant: { id: restaurantId },
-      });
-    } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        error: `No branch of restaurant ${restaurant.name}(${restaurant.id}) with id ${branchId}`,
-      });
-    }
     try {
       await this.branchRepository.delete({
-        id: branch.id,
+        id: branchId,
       });
     } catch (e) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -93,7 +82,7 @@ class BranchController {
       });
     }
     res.status(StatusCodes.OK).json({
-      message: `Deleted Branch with id ${branch.id} from restaurant ${restaurant.name}(${restaurant.id})`,
+      message: `Deleted Branch with id ${branchId} from restaurant ${restaurant.name}(${restaurant.id})`,
     });
   };
 }
