@@ -12,8 +12,8 @@ const authValidator = new AuthValidator();
  * Get Comments
  * Three options:
  *    - normal without body -> Gets all comments in DB
- *    - user id in user field in body -> Get all comments of a specific user
- *    - restaurant id in restaurant field in body -> Get all comments of a restaurant
+ *    - user id in user field in query -> Get all comments of a specific user
+ *    - restaurant id in restaurant field in query -> Get all comments of a restaurant
  */
 router.get('/', commentController.getComments);
 

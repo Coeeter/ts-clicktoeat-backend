@@ -22,7 +22,7 @@ class CommentController {
   }
 
   public getComments = async (req: Request, res: Response) => {
-    const { user, restaurant } = req.body;
+    const { user, restaurant } = req.query;
     if (user && restaurant)
       return res.status(StatusCodes.BAD_REQUEST).json({
         error:
@@ -63,7 +63,7 @@ class CommentController {
         id: restaurantId,
       });
     } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(StatusCodes.NOT_FOUND).json({
         error: `No restaurant with id ${restaurantId}`,
       });
     }
@@ -85,7 +85,7 @@ class CommentController {
         }
       }
     } catch (e) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(StatusCodes.NOT_FOUND).json({
         error: 'Cannot find comment with id ' + parentComment,
       });
     }
