@@ -19,7 +19,7 @@ class LikeController {
   }
 
   public getLikes = async (req: Request, res: Response) => {
-    const { user, comment } = req.body;
+    const { user, comment } = req.query;
     if (user && comment)
       return res.status(StatusCodes.BAD_REQUEST).json({
         error:

@@ -11,8 +11,8 @@ const authValidator = new AuthValidator();
  * Get Dislikes
  * Three options:
  *    - normal: "/api/dislikes" -> get Dislike object with only comment id and user id
- *    - provide user id in user field in body -> get Comments which user has disliked
- *    - provide comment id in comment field in body -> get Users which disliked the comment
+ *    - provide user id in user field in query -> get Comments which user has disliked
+ *    - provide comment id in comment field in query -> get Users which disliked the comment
  */
 router.get('/', dislikeController.getDislikes);
 

@@ -11,8 +11,8 @@ const authValidator = new AuthValidator();
  * Get Likes
  * Three options:
  *    - normal: "/api/likes" -> get Like object with only comment id and user id
- *    - Provide user id in user field in body -> get Comments which user has liked
- *    - Provide comment id in comment field in body -> get Users which liked the comment
+ *    - Provide user id in user field in query -> get Comments which user has liked
+ *    - Provide comment id in comment field in query -> get Users which liked the comment
  */
 router.get('/', likeController.getLikes);
 
