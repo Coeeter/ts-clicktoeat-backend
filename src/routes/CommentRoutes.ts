@@ -18,6 +18,13 @@ const authValidator = new AuthValidator();
 router.get('/', commentController.getComments);
 
 /**
+ * Get Comment by Id
+ * Provide comment id in url
+ * returns comment if found
+ */
+router.get('/:id', commentController.getCommentsById)
+
+/**
  * Create Comment (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
  * Provide restaurant id in url
  * Requires review, rating fields in body

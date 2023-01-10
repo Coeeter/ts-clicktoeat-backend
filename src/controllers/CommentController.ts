@@ -54,6 +54,22 @@ class CommentController {
     }
   };
 
+  public getCommentsById = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    try {
+      const result = await this.commentRepository.findOneBy({ id });
+      if (result == null)
+        return res.status(StatusCodes.NOT_FOUND).json({
+          message: `Comment with id ${id} not found`,
+        });
+      return res.status(StatusCodes.OK).json(this.transformComment(result));
+    } catch (e) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: e,
+      });
+    }
+  };
+
   public createComment = async (req: Request, res: Response) => {
     const restaurantId = req.params.id!.toString();
     const user = req.user!;

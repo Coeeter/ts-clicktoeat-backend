@@ -14,12 +14,6 @@ const authValidator = new AuthValidator();
 router.get('/', userController.getAllUsers);
 
 /**
- * Get Account details by id
- * Provide user id in url
- */
-router.get('/:id', userController.getUserById);
-
-/**
  * Token Validation (NEEDS TO HAVE TOKEN IN AUTHORIZATION FIELD -> "Bearer $token")
  * Can call this route to check if token from logging in is still valid.
  * Returns the profile of user associated with token if token is valid
@@ -29,6 +23,12 @@ router.get(
   authValidator.checkIfTokenExistsAndIsValid,
   userController.validateIfUserIsStillLoggedIn
 );
+
+/**
+ * Get Account details by id
+ * Provide user id in url
+ */
+router.get('/:id', userController.getUserById);
 
 /**
  * Login user.
