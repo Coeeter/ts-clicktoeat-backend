@@ -30,22 +30,43 @@ class CommentController {
       });
     try {
       if (user) {
-        const result = await this.commentRepository.findBy({
-          user: { id: user.toString() },
+        const result = await this.commentRepository.find({
+          where: {
+            user: {
+              id: user.toString(),
+            },
+          },
+          relations: {
+            likes: true,
+            dislikes: true,
+          },
         });
         return res
           .status(StatusCodes.OK)
           .json(result.map(this.transformComment));
       }
       if (restaurant) {
-        const result = await this.commentRepository.findBy({
-          restaurant: { id: restaurant.toString() },
+        const result = await this.commentRepository.find({
+          where: {
+            restaurant: {
+              id: restaurant.toString(),
+            },
+          },
+          relations: {
+            likes: true,
+            dislikes: true,
+          },
         });
         return res
           .status(StatusCodes.OK)
           .json(result.map(this.transformComment));
       }
-      const result = await this.commentRepository.find();
+      const result = await this.commentRepository.find({
+        relations: {
+          likes: true,
+          dislikes: true
+        }
+      });
       res.status(StatusCodes.OK).json(result.map(this.transformComment));
     } catch (e) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -57,7 +78,13 @@ class CommentController {
   public getCommentsById = async (req: Request, res: Response) => {
     const id = req.params.id;
     try {
-      const result = await this.commentRepository.findOneBy({ id });
+      const result = await this.commentRepository.findOne({
+        where: { id },
+        relations: {
+          likes: true,
+          dislikes: true,
+        },
+      });
       if (result == null)
         return res.status(StatusCodes.NOT_FOUND).json({
           message: `Comment with id ${id} not found`,
@@ -136,7 +163,13 @@ class CommentController {
     const id = req.params.id;
     let comment;
     try {
-      comment = await this.commentRepository.findOneByOrFail({ id });
+      comment = await this.commentRepository.findOneOrFail({
+        where: { id },
+        relations: {
+          likes: true,
+          dislikes: true,
+        },
+      });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
         error: 'Cannot find comment with id ' + id,
@@ -200,6 +233,10 @@ class CommentController {
         fcmToken: undefined,
         password: undefined,
       },
+      likeCount: comment.likes.length,
+      dislikeCount: comment.dislikes.length,
+      likes: undefined,
+      dislikes: undefined,
     };
   };
 }
