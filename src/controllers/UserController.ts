@@ -118,9 +118,11 @@ class UserController {
         const result = await this.uploadImage(req, res, image.data);
         if (!result || !result.uploadedUrl)
           throw new Error('Unable to upload image');
-        user.image.key = result.key;
-        user.image.url = result.uploadedUrl;
-        await this.imageRepository.save(user.image);
+        const userImage = new Image();
+        userImage.key = result.key;
+        userImage.url = result.uploadedUrl;
+        await this.imageRepository.save(userImage);
+        user.image = userImage;
       }
       await this.userRepository.save(user);
       if (deleteImage) {
