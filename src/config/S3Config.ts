@@ -13,8 +13,7 @@ export const uploadImageToS3 = async (key: string, blob: Buffer) => {
     .resize({
       width: 250,
       height: 250,
-      fit: 'contain',
-      background: "#FFFFFF"
+      fit: 'inside'
     })
     .toBuffer();
 
