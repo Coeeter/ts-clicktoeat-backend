@@ -58,7 +58,6 @@ class RestaurantController {
     const { name, description } = req.body;
     const image: UploadedFile = [req.files?.brandImage].flat()[0]!;
     let id = v4();
-    const imageUrl = v4();
     try {
       const key = `restaurants/${v4()}.jpg`;
       const { uploadedUrl, error } = await uploadImageToS3(key, image.data);

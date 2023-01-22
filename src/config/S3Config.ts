@@ -1,4 +1,5 @@
 import { S3 } from 'aws-sdk';
+import sharp from 'sharp';
 
 import config from './EnvConfig';
 
@@ -8,10 +9,19 @@ const s3 = new S3({
 });
 
 export const uploadImageToS3 = async (key: string, blob: Buffer) => {
+  const buffer = await sharp(blob)
+    .resize({
+      width: 250,
+      height: 250,
+      fit: 'contain',
+      background: "#FFFFFF"
+    })
+    .toBuffer();
+
   const uploadConfig = {
     Bucket: config.aws.bucketName,
     Key: key,
-    Body: blob,
+    Body: buffer,
   };
   try {
     const uploadedImage = await s3
