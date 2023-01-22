@@ -145,7 +145,13 @@ class UserController {
       user = await this.userRepository.findOneByOrFail({ email });
     } catch (e) {
       return res.status(StatusCodes.BAD_REQUEST).json({
-        error: `Cannot find user with email ${email}`,
+        message: 'Errors in fields provided',
+        errors: [
+          {
+            field: 'email',
+            error: `Cannot find user with email ${email}`,
+          },
+        ],
       });
     }
     const isCorrectPassword = await user.comparePasswords(password);
