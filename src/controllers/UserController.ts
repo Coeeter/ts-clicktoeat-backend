@@ -109,6 +109,8 @@ class UserController {
     if (email) user.email = email;
     if (password) await user.setPassword(password);
     if (fcmToken) user.fcmToken = fcmToken;
+    // @ts-ignore
+    if (fcmToken == 'delete') user.fcmToken = null;
     try {
       if (deleteImage || (image && user.image)) {
         const result = this.deleteImage(req, res, user.image.key);
