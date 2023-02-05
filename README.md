@@ -1,6 +1,6 @@
 # ts-clicktoeat-backend (ClickToEat V2)
 <img src="/public/assets/clicktoeat_v2_logo_round.svg" width="200" align="left" />
-This repository contains the source code for the updated and better version of my old project <a href="https://github.com/Coeeter/ClickToRun">ClickToRun</a> which is a restaurant review application. I created this project for my studies in TP as I need to reuse the ClickToEat API for a mobile application. I took up this chance to recreate the api with my current knowledge relevant to this industry and recreated the api with better features and with easy to understand code.
+This repository contains the source code for the updated and better version of my old project <a href="https://github.com/Coeeter/ClickToEat">ClickToEat</a> which is a restaurant review application. I created this project for my studies in TP as I need to reuse the ClickToEat API for a mobile application. I took up this chance to recreate the api with my current knowledge relevant to this industry and recreated the api with better features and with easy to understand code.
 <br clear="left" />
 
 ## Features
