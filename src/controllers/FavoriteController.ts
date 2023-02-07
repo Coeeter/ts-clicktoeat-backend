@@ -41,7 +41,7 @@ class FavoriteController {
         relations: { favoriteUsers: true },
       });
       res.status(StatusCodes.OK).json(
-        result.favoriteUsers.map(item => {
+        result.favoriteUsers.map((item: User) => {
           return {
             ...item,
             password: undefined,
