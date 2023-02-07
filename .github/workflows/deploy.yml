@@ -65,7 +65,7 @@ jobs:
         with:
           username: 'ec2-user'
           host: ${{ secrets.SERVER }}
-          key: ${{ secrets.SECRET_KEY }}
+          key: ${{ secrets.KEY }}
           port: 22
           script: |
             cd ClickToEat
