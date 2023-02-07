@@ -1,0 +1,76 @@
+name: Deploy project
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the Project
+        uses: actions/checkout@v3
+      - name: Installing Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+      - name: Installing Dependencies
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+      - name: Build Server
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: build
+      - name: Build FrontEnd
+        run: |
+          cd public
+          npm ci
+          npm run build
+          cd ..
+      - name: Deploy Backend
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: 'ec2-user'
+          server: ${{ secrets.SERVER }}
+          ssh_private_key: ${{ secrets.KEY }}
+          local_path: './dist/*'
+          remote_path: '/home/ec2-user/ClickToEat/dist/'
+      - name: Deploy package.json
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: 'ec2-user'
+          server: ${{ secrets.SERVER }}
+          ssh_private_key: ${{ secrets.KEY }}
+          local_path: './package.json'
+          remote_path: '/home/ec2-user/ClickToEat/'
+      - name: Deploy yarn.lock
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: 'ec2-user'
+          server: ${{ secrets.SERVER }}
+          ssh_private_key: ${{ secrets.KEY }}
+          local_path: './yarn.lock'
+          remote_path: '/home/ec2-user/ClickToEat/'
+      - name: Deploy Frontend
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: 'ec2-user'
+          server: ${{ secrets.SERVER }}
+          ssh_private_key: ${{ secrets.KEY }}
+          local_path: './public/dist/*'
+          remote_path: '/home/ec2-user/ClickToEat/public/dist/'
+      - name: Install Dependencies on ec2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER }}
+          key: ${{ secrets.KEY }}
+          port: 22
+          script: |
+            cd ClickToEat
+            yarn install
+            pm2 stop 0
+            pm2 start 0
+            
