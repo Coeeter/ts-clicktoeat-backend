@@ -12,6 +12,7 @@ This repository contains the source code for the updated and better version of m
 - A small landing page for the api
 - A reset password page to reset password
 - Sends notifications after user likes, dislikes or replies to a comment
+- DevOPs using github actions
 
 ## Usage
 To run this server on your local machine you can clone this repository and make sure to create and env file using the values in the .env.example file in root. Also make sure to have mysql installed on your machine. Then you can run the server on your local port 8080 by running these commands

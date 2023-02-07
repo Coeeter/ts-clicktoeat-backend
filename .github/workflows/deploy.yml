@@ -5,6 +5,13 @@ on:
   push:
     branches:
       - master
+    paths:
+      - public/**
+      - src/**
+      - package.json
+      - tsconfig.json
+      - yarn.lock
+      - .github/workflows/**
   
 jobs:
   deploy:
