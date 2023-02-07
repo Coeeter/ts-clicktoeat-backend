@@ -64,7 +64,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER }}
-          key: ${{ secrets.KEY }}
+          key: ${{ secrets.SECRET_KEY }}
           port: 22
           script: |
             cd ClickToEat
