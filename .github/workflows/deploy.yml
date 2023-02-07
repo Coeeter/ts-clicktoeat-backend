@@ -21,12 +21,7 @@ jobs:
         with:
           cmd: install
       - name: Build Server
-        run: |
-          cd src/models
-          ls -la
-          cd ..
-          cd ..
-          npm run build
+        run: npm run build
       - name: Build FrontEnd
         run: |
           cd public
