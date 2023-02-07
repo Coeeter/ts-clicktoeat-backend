@@ -63,6 +63,7 @@ jobs:
       - name: Install Dependencies on ec2
         uses: appleboy/ssh-action@master
         with:
+          username: 'ec2-user'
           host: ${{ secrets.SERVER }}
           key: ${{ secrets.SECRET_KEY }}
           port: 22
