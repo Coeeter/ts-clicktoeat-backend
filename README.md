@@ -55,8 +55,6 @@ npm run start
 ```
 With this the api is ready to be consumed.
 
-I have also deployed this api using ec2 and load balancers so you can also use the api by this link https://clicktoeat.nasportfolio.com.
-
 ## Built using
 - nodejs (for the api)
   - typescript
